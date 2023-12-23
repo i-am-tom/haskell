@@ -1,0 +1,4 @@
+packages: *
+
+package *
+  ghc-options: -Wall -Wextra -Wunused-packages

@@ -1,0 +1,26 @@
+cabal-version: 3.0
+name: an
+version: 0.0.0.0
+
+library
+  exposed-modules:
+    Data.An
+  build-depends:
+    , base
+    , hashable
+  hs-source-dirs: source
+  default-language: GHC2021
+
+test-suite readme
+  build-depends:
+    , an
+    , base
+    , containers
+    , hspec
+  main-is: Main.hs
+  type: exitcode-stdio-1.0
+  ghc-options: -pgmL markdown-unlit -Wall
+  build-tool-depends: markdown-unlit:markdown-unlit
+  hs-source-dirs: tests
+  default-language: GHC2021
+  other-modules: README
