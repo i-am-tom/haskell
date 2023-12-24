@@ -22,10 +22,10 @@ jobs:
           dist-newstyle
           ~/.ghcup
 
-    - cabal update
+    - run: cabal update
 
-    - cabal build ${{ inputs.package }} --only-dependencies
+    - run: cabal build ${{ inputs.package }} --only-dependencies
 
-    - cabal build ${{ inputs.package }} --ghc-options=-Werror
+    - run: cabal build ${{ inputs.package }} --ghc-options=-Werror
 
-    - cabal test all
+    - run: cabal test all
