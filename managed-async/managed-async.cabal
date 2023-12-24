@@ -1,0 +1,13 @@
+cabal-version: 3.0
+name: managed-async
+version: 0.0.0.0
+
+library
+  exposed-modules:
+    Control.Concurrent.Async.Managed
+  build-depends:
+    , async
+    , base
+    , managed
+  hs-source-dirs: source
+  default-language: GHC2021
