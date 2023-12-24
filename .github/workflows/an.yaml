@@ -1,7 +1,6 @@
 name: an
 
 on:
-  merge_group:
   push:
 
 jobs:

@@ -1,7 +1,6 @@
 name: variant
 
 on:
-  merge_group:
   push:
 
 jobs:
