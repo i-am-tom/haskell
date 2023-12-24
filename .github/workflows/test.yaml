@@ -24,8 +24,8 @@ jobs:
 
     - run: cabal update
 
-    - run: cabal build ${{ inputs.package }} --only-dependencies
+    - run: cabal build all --only-dependencies
 
-    - run: cabal build ${{ inputs.package }} --ghc-options=-Werror
+    - run: cabal build all --ghc-options=-Werror
 
     - run: cabal test all
