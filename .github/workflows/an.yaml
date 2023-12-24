@@ -24,8 +24,8 @@ jobs:
 
     - run: cabal update
 
-    - run: cabal build all --only-dependencies
+    - run: cabal build an --only-dependencies
 
-    - run: cabal build all --ghc-options=-Werror
+    - run: cabal build an --ghc-options=-Werror
 
-    - run: cabal test all
+    - run: cabal test an
