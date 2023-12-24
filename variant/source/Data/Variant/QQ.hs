@@ -27,8 +27,6 @@ import Data.String (fromString)
 import Language.Haskell.Meta (parseExp, parsePat)
 import Language.Haskell.TH.Quote (QuasiQuoter (..))
 import Language.Haskell.TH.Syntax (Exp (AppE, ConE), Pat (ConP), Q, mkName)
-import Debug.Trace qualified as Debug
-import Data.Text qualified as Text
 
 -- | A quasi-quoter for generating the 'Variant' wrapper for a given value,
 -- supporting both patterns and expressions. See the module summary for
