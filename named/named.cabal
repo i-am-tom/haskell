@@ -11,7 +11,7 @@ library
   hs-source-dirs: source
   default-language: GHC2021
 
-test-suite readme
+test-suite tests
   build-depends:
     , base
     , hspec
