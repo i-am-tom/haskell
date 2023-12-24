@@ -1,7 +1,6 @@
 name: managed-async
 
 on:
-  merge_group:
   push:
 
 jobs:
