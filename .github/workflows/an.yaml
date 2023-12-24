@@ -1,0 +1,31 @@
+name: an
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: haskell/actions/setup@v2
+      with:
+        ghc-version: 9.2.4
+
+    - uses: actions/cache@v3
+      with:
+        key: ${{ inputs.package }}-build
+        path: |
+          ${{ steps.setup.outputs.cabal-store }}
+          dist-newstyle
+          ~/.ghcup
+
+    - run: cabal update
+
+    - run: cabal build an --only-dependencies
+
+    - run: cabal build an --ghc-options=-Werror
+
+    - run: cabal test an
