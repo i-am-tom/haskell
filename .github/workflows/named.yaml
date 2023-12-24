@@ -1,8 +1,6 @@
 name: named
 
 on:
-  merge_group:
-  pull_request:
   push:
 
 jobs:
