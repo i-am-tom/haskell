@@ -5,7 +5,7 @@
 module Data.Event where
 
 import Control.Concurrent.Async (concurrently)
-import Control.Monad (forever)
+import Control.Monad (forever, join)
 import Data.IORef (atomicModifyIORef', newIORef, readIORef)
 import Data.Kind (Type)
 import Data.Named (name, value)
@@ -67,3 +67,12 @@ repeatedly xs = Source \k -> forever (xs >>= k)
 -- | Create a stateful event stream using some given step function.
 unfold :: forall s x. (s -> IO (x, s)) -> s -> Source x
 unfold f s = Source \k -> let go a = f a >>= \(x, b) -> k x *> go b in go s
+
+-- | Create an event by folding over a different one.
+fold :: forall x y. (x -> y -> y) -> y -> Source x -> Source y
+fold f initial xs = Source \k -> do
+  ref <- newIORef initial
+
+  subscribe xs \x -> join do
+    atomicModifyIORef' ref \y ->
+      (f x y, k (f x y))
