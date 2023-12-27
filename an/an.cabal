@@ -8,6 +8,8 @@ library
   build-depends:
     , base
     , hashable
+  ghc-options: -pgmL markdown-unlit -Wall
+  build-tool-depends: markdown-unlit:markdown-unlit
   hs-source-dirs: source
   default-language: GHC2021
 
@@ -15,12 +17,9 @@ test-suite tests
   build-depends:
     , an
     , base
-    , containers
+    , hashable
     , hspec
   main-is: Main.hs
   type: exitcode-stdio-1.0
-  ghc-options: -pgmL markdown-unlit -Wall
-  build-tool-depends: markdown-unlit:markdown-unlit
   hs-source-dirs: tests
   default-language: GHC2021
-  other-modules: README
