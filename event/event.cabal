@@ -6,10 +6,8 @@ library
   exposed-modules:
     Data.Event
   build-depends:
-    , async
     , base
-    , unordered-containers
-    , named
+    , containers
     , witherable
   hs-source-dirs: source
   default-language: GHC2021
@@ -19,6 +17,7 @@ test-suite tests
     , base
     , event
     , hspec
+    , witherable
   main-is: Main.hs
   type: exitcode-stdio-1.0
   ghc-options: -pgmL markdown-unlit -Wall
