@@ -15,7 +15,7 @@ module Data.Event
   ) where
 
 import Control.Applicative (Alternative (..), liftA2)
-import Control.Monad ( join)
+import Control.Monad (join)
 import Data.Foldable (for_)
 import Data.IORef (atomicModifyIORef', newIORef, readIORef, writeIORef)
 import Data.IntMap.Strict qualified as IntMap
