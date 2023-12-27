@@ -2,27 +2,30 @@
 
 module Main where
 
+import Control.Applicative (liftA2)
 import Data.Named
-import README qualified
 import Test.Hspec (hspec, it, shouldBe, shouldNotBe)
 
 main :: IO ()
-main = do
-  README.main
+main = hspec do
+  let and_ :: Named (Bool -> Bool -> Bool)
+      and_ = pure (&&)
 
-  hspec do
-    it "Lifts" do
-      x <- liftN1 (\f -> f True False) README.and
-      y <- liftN1 (\f -> f True False) README.and
-      z <- liftN1 (\f -> f True True) README.and
+      or_ :: Named (Bool -> Bool -> Bool)
+      or_ = pure (||)
 
-      x `shouldBe` y
-      x `shouldNotBe` z
+  it "Lifts" do
+    let x = fmap (\f -> f True False) and_
+        y = fmap (\f -> f True False) and_
+        z = fmap (\f -> f True  True) and_
 
-    it "Lifts twice" do
-      x <- liftN2 (\f g -> f True False && g True False) README.and README.or
-      y <- liftN2 (\f g -> f True False && g True False) README.and README.or
-      z <- liftN2 (\f g -> f True True && g True True) README.and README.or
+    x `shouldBe` y
+    x `shouldNotBe` z
 
-      x `shouldBe` y
-      x `shouldNotBe` z
+  it "Lifts twice" do
+    let x = liftA2 (\f g -> f True False && g True False) and_ or_
+        y = liftA2 (\f g -> f True False && g True False) and_ or_
+        z = liftA2 (\f g -> f True  True && g True  True) and_ or_
+
+    x `shouldBe` y
+    x `shouldNotBe` z
