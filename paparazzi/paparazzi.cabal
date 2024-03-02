@@ -11,7 +11,7 @@ library
     , JuicyPixels
     , OpenGL
     , process
-    , sdl2 >= 2.2
+    , sdl2 >= 2.0.0
     , vector
   ghc-options: -Wextra
   hs-source-dirs: source
