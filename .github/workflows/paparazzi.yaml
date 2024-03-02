@@ -1,0 +1,32 @@
+name: paparazzi
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: haskell/actions/setup@v2
+      id: setup
+      with:
+        ghc-version: 9.2.4
+
+    - uses: actions/cache@v3
+      with:
+        key: paparazzi-build
+        path: |
+          ${{ steps.setup.outputs.cabal-store }}
+          dist-newstyle
+          ~/.ghcup
+
+    - run: cabal update
+
+    - run: cabal build paparazzi --only-dependencies
+
+    - run: cabal build paparazzi --ghc-options=-Werror
+
+    - run: cabal test paparazzi
