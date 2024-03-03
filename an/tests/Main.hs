@@ -10,7 +10,7 @@ import Type.Reflection (Typeable)
 
 main :: IO ()
 main = hspec do
-  let lift :: Either String Int -> An (Ord && Hashable && Show && Typeable)
+  let lift :: Either Int String -> An (Ord && Hashable && Show && Typeable)
       lift = either A A
 
   prop "Eq" \x y -> (lift x == lift y) == (x == y)

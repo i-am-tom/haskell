@@ -14,7 +14,7 @@ module Data.Event
     sample,
   ) where
 
-import Control.Applicative (Alternative (..), liftA2)
+import Control.Applicative (Alternative (..))
 import Control.Monad (join)
 import Data.Foldable (for_)
 import Data.IORef (atomicModifyIORef', newIORef, readIORef, writeIORef)
