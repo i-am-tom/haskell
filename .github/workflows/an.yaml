@@ -15,13 +15,13 @@ jobs:
       with:
         ghc-version: 9.8.1
 
-    - uses: actions/cache@v3
-      with:
-        key: an-build
-        path: |
-          ${{ steps.setup.outputs.cabal-store }}
-          dist-newstyle
-          ~/.ghcup
+          #     - uses: actions/cache@v3
+          #       with:
+          #         key: an-build
+          #         path: |
+          #           ${{ steps.setup.outputs.cabal-store }}
+          #           dist-newstyle
+          #           ~/.ghcup
 
     - run: cabal update
 
