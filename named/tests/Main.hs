@@ -2,7 +2,6 @@
 
 module Main where
 
-import Control.Applicative (liftA2)
 import Data.Named
 import Test.Hspec (hspec, it, shouldBe, shouldNotBe)
 
