@@ -1,8 +1,9 @@
 {-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE ViewPatterns #-}
 module Main where
 
-import Control.Applicative ((<|>), empty, liftA2)
+import Control.Applicative ((<|>), empty)
 import Control.Monad (guard)
 import Data.Event
 import Data.Foldable (for_)
@@ -19,7 +20,10 @@ main = hspec do
         queue <- newIORef values
 
         subscribe source \x -> do
-          next <- atomicModifyIORef' queue \cs -> (tail cs, head cs)
+          next <- atomicModifyIORef' queue \case
+            c : cs -> (cs, c)
+            [    ] -> error "??"
+
           x `shouldBe` next
 
       infix 1 `shouldYield`

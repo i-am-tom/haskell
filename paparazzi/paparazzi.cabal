@@ -1,0 +1,30 @@
+cabal-version: 3.0
+name: paparazzi
+version: 0.0.0.0
+
+library
+  exposed-modules:
+    Graphics.Rendering.OpenGL.Snapshot
+  build-depends:
+    , base
+    , bytestring
+    , JuicyPixels
+    , OpenGL
+    , process
+    , sdl2 >= 2.0
+    , vector
+  ghc-options: -Wextra
+  hs-source-dirs: source
+  default-language: GHC2021
+
+test-suite tests
+  build-depends:
+    , base
+    , bytestring
+    , OpenGL
+    , paparazzi
+    , sdl2
+  main-is: Main.hs
+  type: exitcode-stdio-1.0
+  hs-source-dirs: tests
+  default-language: GHC2021

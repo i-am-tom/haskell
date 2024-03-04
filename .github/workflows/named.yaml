@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - run: sudo apt-get install -y libsdl2-dev
+
     - uses: actions/checkout@v3
 
     - uses: haskell-actions/setup@v2
@@ -28,5 +30,7 @@ jobs:
     - run: cabal build named --only-dependencies
 
     - run: cabal build named --ghc-options=-Werror
+
+    - run: cabal build named:test:tests --ghc-options=-Werror
 
     - run: cabal test named
