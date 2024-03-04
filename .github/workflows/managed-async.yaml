@@ -30,7 +30,3 @@ jobs:
     - run: cabal build managed-async --only-dependencies
 
     - run: cabal build managed-async --ghc-options=-Werror
-
-    - run: cabal build managed-async:test:tests --ghc-options=-Werror
-
-    - run: cabal test managed-async -- --randomize

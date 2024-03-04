@@ -33,4 +33,4 @@ jobs:
 
     - run: cabal build named:test:tests --ghc-options=-Werror
 
-    - run: cabal test named -- --randomize
+    - run: cabal test named

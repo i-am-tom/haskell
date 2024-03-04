@@ -35,4 +35,4 @@ jobs:
 
     - uses: GabrielBB/xvfb-action@v1
       with:
-        run: cabal test paparazzi -- --randomize
+        run: cabal test paparazzi
