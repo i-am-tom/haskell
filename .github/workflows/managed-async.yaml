@@ -8,11 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: libsdl-org/setup-sdl@main
-      with:
-        install-linux-dependencies: true
-        version: 2-latest
-        version-sdl-image: 2-latest
+    - run: sudo apt-get install -y libsdl2-dev
 
     - uses: actions/checkout@v3
 
@@ -37,4 +33,4 @@ jobs:
 
     - run: cabal build managed-async:test:tests --ghc-options=-Werror
 
-    - run: cabal test managed-async
+    - run: cabal test managed-async -- --randomize
