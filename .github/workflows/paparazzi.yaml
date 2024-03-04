@@ -8,7 +8,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - run: sudo apt-get install -y ffmpeg libsdl2-dev
+    - uses: libsdl-org/setup-sdl@main
+      with:
+        install-linux-dependencies: true
+        version: 2-latest
+        version-sdl-image: 2-latest
+
+    - run: sudo apt-get install -y ffmpeg
 
     - uses: actions/checkout@v3
 
