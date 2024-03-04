@@ -8,7 +8,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - run: sudo apt-get install -y libsdl2-dev
+    - uses: libsdl-org/setup-sdl@main
+      with:
+        install-linux-dependencies: true
+        version: 2-latest
+        version-sdl-image: 2-latest
 
     - uses: actions/checkout@v3
 
@@ -29,5 +33,7 @@ jobs:
     - run: cabal build event --only-dependencies
 
     - run: cabal build event --ghc-options=-Werror
+
+    - run: cabal build event:test:tests --ghc-options=-Werror
 
     - run: cabal test event
