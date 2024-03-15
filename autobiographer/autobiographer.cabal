@@ -7,9 +7,6 @@ library
     Control.Applicative.Timeline
   build-depends:
     , base
-    , free
-    , hedgehog
-    , transformers
   hs-source-dirs: source
   default-language: GHC2021
 
