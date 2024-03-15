@@ -1,0 +1,25 @@
+cabal-version: 3.4
+name: autobiographer
+version: 0.1.0.0
+
+library
+  exposed-modules:
+    Control.Applicative.Timeline
+  build-depends:
+    , base
+    , free
+    , hedgehog
+    , transformers
+  hs-source-dirs: source
+  default-language: GHC2021
+
+test-suite tests
+  default-language: GHC2021
+  type: exitcode-stdio-1.0
+  hs-source-dirs: tests
+  main-is: Main.hs
+  build-depends:
+    , autobiographer
+    , base
+    , containers
+    , hedgehog
