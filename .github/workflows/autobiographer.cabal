@@ -1,0 +1,36 @@
+name: autobiographer
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - run: sudo apt-get install -y libsdl2-dev
+
+    - uses: actions/checkout@v3
+
+    - uses: haskell-actions/setup@v2
+      id: setup
+      with:
+        ghc-version: 9.8.1
+
+    - uses: actions/cache@v3
+      with:
+        key: autobiographer-build
+        path: |
+          ${{ steps.setup.outputs.cabal-store }}
+          dist-newstyle
+          ~/.ghcup
+
+    - run: cabal update
+
+    - run: cabal build autobiographer --only-dependencies
+
+    - run: cabal build autobiographer --ghc-options=-Werror
+
+    - run: cabal build autobiographer:test:tests --ghc-options=-Werror
+
+    - run: cabal test autobiographer
