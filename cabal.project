@@ -1,4 +1,5 @@
 packages: *
+tests: true
 
 package *
   ghc-options: -Wall -Wextra -Wunused-packages
