@@ -1,0 +1,44 @@
+cabal-version: 3.0
+name: herald
+version: 0.0.0.0
+
+library
+  exposed-modules:
+    Herald.Schema
+  build-depends:
+    , aeson
+    , base
+    , containers
+    , lens
+    , openapi3
+    , regex-pcre
+    , scientific
+    , text
+    , vector
+  hs-source-dirs: source
+  default-language: GHC2021
+
+test-suite tests
+  build-depends:
+    , aeson
+    , base
+    , herald
+    , hspec
+    , openapi3
+    , regex-pcre
+    , tasty
+    , tasty-hspec
+    , text
+  build-tool-depends:
+    tasty-discover:tasty-discover
+  main-is: Driver.hs
+  other-modules:
+    ArraySpec
+    BooleanSpec
+    NumberSpec
+    ObjectSpec
+    StringSpec
+    Utilities
+  type: exitcode-stdio-1.0
+  hs-source-dirs: tests
+  default-language: GHC2021
