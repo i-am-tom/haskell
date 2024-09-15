@@ -22,5 +22,5 @@ of entire programs.
 
 The implementation of this library is thanks to two papers:
 
-- [A Theory of Changes for Higher-Order Languages: Incrementalizing λ-Calculi by Static Differentiation - Yufei Cai, Paolo G. Giarrusso, Tillmann Rendel, Klaus Ostermann](https://arxiv.org/abs/1312.0658)
-- [Compiling to Categories - Conal Elliott](http://conal.net/papers/compiling-to-categories/)
+- [A Theory of Changes for Higher-Order Languages: Incrementalizing λ-Calculi by Static Differentiation](https://arxiv.org/abs/1312.0658) - Yufei Cai, Paolo G. Giarrusso, Tillmann Rendel, Klaus Ostermann
+- [Compiling to Categories](http://conal.net/papers/compiling-to-categories/) - Conal Elliott
