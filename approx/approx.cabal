@@ -1,0 +1,29 @@
+cabal-version: 3.0
+name: approx
+version: 0.0.0.0
+
+library
+  exposed-modules:
+    Data.Approx
+  build-depends:
+    , base
+  hs-source-dirs: source
+  default-language: GHC2021
+
+test-suite tests
+  build-depends:
+    , base
+    , hedgehog
+    , hspec
+    , tasty
+    , tasty-hedgehog
+    , tasty-hspec
+    , approx
+  build-tool-depends:
+    tasty-discover:tasty-discover
+  main-is: Driver.hs
+  other-modules:
+    Data.ApproxSpec
+  type: exitcode-stdio-1.0
+  hs-source-dirs: tests
+  default-language: GHC2021
