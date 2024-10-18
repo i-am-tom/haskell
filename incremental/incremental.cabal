@@ -1,0 +1,29 @@
+cabal-version: 3.0
+name: incremental
+version: 0.0.0.0
+
+library
+  exposed-modules:
+    Data.Change
+  build-depends:
+    , base
+  ghc-options: -pgmL markdown-unlit -Wall
+  build-tool-depends: markdown-unlit:markdown-unlit
+  hs-source-dirs: source
+  default-language: GHC2021
+
+test-suite tests
+  build-depends:
+    , base
+    , hedgehog
+    , incremental
+    , tasty
+    , tasty-hedgehog
+  build-tool-depends:
+    tasty-discover:tasty-discover
+  main-is: Driver.hs
+  other-modules:
+    Data.ChangeSpec
+  type: exitcode-stdio-1.0
+  hs-source-dirs: tests
+  default-language: GHC2021
