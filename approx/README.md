@@ -1,4 +1,4 @@
-# ✍️  Aprox
+# ✍️  Approx
 
 A class for approximate equality.
 
