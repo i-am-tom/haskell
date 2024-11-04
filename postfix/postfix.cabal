@@ -11,11 +11,7 @@ library
     Postfix.Instances.Orphans
   build-depends:
     , base
-    , containers
-    , mtl
     , template-haskell
-    , via
-    , witch
   hs-source-dirs: source
   default-language: GHC2021
 
