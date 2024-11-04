@@ -16,7 +16,7 @@ newtype Seconds = Seconds Double
 We can create values such as `Seconds 5` without issue, but we get an error
 should we try to interpret `5 Seconds`:
 
-```haskell
+```
 No instance for ‘Num ((Double -> Seconds) -> t0)’ arising from the literal ‘5’
 (maybe you haven't applied a function to enough arguments?)
 ```
