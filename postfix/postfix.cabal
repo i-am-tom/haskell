@@ -1,0 +1,27 @@
+cabal-version: 3.0
+name: postfix
+version: 0.0.0.0
+
+library
+  exposed-modules:
+    Postfix
+    Postfix.Aliases
+    Postfix.Introspection
+    Postfix.Instances
+    Postfix.Instances.Orphans
+  build-depends:
+    , base
+    , template-haskell
+  hs-source-dirs: source
+  default-language: GHC2021
+
+test-suite tests
+  build-depends:
+    , base
+    , hspec
+    , postfix
+    , witch
+  main-is: Main.hs
+  type: exitcode-stdio-1.0
+  hs-source-dirs: tests
+  default-language: GHC2021
