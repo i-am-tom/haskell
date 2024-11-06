@@ -22,7 +22,6 @@ test-suite tests
     , base
     , hedgehog
     , hspec
-    , hspec-expectations
     , tasty
     , tasty-hedgehog
     , tasty-hspec
