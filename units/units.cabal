@@ -32,7 +32,8 @@ test-suite tests
   main-is: Driver.hs
   other-modules:
     Measurement.AngleSpec
-    Measurement.CoordinateSpec
+    Measurement.Coordinate.PlaneSpec
+    Measurement.Coordinate.SpaceSpec
     Measurement.Helpers
   type: exitcode-stdio-1.0
   hs-source-dirs: tests
