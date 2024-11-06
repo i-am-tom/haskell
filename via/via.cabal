@@ -6,6 +6,7 @@ library
   exposed-modules:
     Data.Via
   build-depends:
+    , approx
     , base
     , witch
   hs-source-dirs: source

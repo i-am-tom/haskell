@@ -6,6 +6,7 @@
 -- Derivation by conversion to other types.
 module Data.Via where
 
+import Data.Approx (Approx (..))
 import Data.Coerce (Coercible, coerce)
 import Data.Function (on)
 import Data.Kind (Constraint)
@@ -19,6 +20,9 @@ newtype (x + c) y = With { getWith :: y }
 
 instance (Eq x, Out c x y) => Eq ((x + c) y) where
   (==) = (==) @x `on` (outbound @c . getWith)
+
+instance (Approx x, Out c x y) => Approx ((x + c) y) where
+  (~=) = (~=) @x `on` (outbound @c . getWith)
 
 instance (Ord x, Out c x y) => Ord ((x + c) y) where
   compare = compare @x `on` (outbound @c . getWith)

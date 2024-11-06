@@ -1,0 +1,40 @@
+cabal-version: 3.0
+name: units
+version: 0.0.0.0
+
+library
+  exposed-modules:
+    Measurement.Angle
+    Measurement.Coordinate.Plane
+    Measurement.Coordinate.Space
+  build-depends:
+    , approx
+    , base
+    , postfix
+    , via
+    , witch
+  hs-source-dirs: source
+  default-language: GHC2021
+
+test-suite tests
+  build-depends:
+    , approx
+    , base
+    , hedgehog
+    , hspec
+    , tasty
+    , tasty-hedgehog
+    , tasty-hspec
+    , units
+    , witch
+  build-tool-depends:
+    tasty-discover:tasty-discover
+  main-is: Driver.hs
+  other-modules:
+    Measurement.AngleSpec
+    Measurement.Coordinate.PlaneSpec
+    Measurement.Coordinate.SpaceSpec
+    Measurement.Helpers
+  type: exitcode-stdio-1.0
+  hs-source-dirs: tests
+  default-language: GHC2021
