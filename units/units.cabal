@@ -10,7 +10,6 @@ library
   build-depends:
     , approx
     , base
-    , linear
     , postfix
     , via
     , witch
