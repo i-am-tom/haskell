@@ -5,9 +5,9 @@ module Measurement.Helpers where
 
 import Control.Monad (unless)
 import Data.Approx (Approx ((~=)))
+import Data.Kind (Constraint, Type)
 import Hedgehog (Gen, Property, annotateShow, diff, forAll, property)
 import Test.Hspec (Expectation, HasCallStack, expectationFailure)
-import Data.Kind (Constraint, Type)
 import Witch (From (from))
 
 {- HLINT ignore "Use camelCase" -}
@@ -26,7 +26,6 @@ law_roundtrip gen = property do
 
   annotateShow y
   diff x (~=) (from y)
-
 
 -- | The first argument should approximately equal the second according to the
 -- @Approx x@ instance.

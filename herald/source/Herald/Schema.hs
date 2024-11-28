@@ -8,57 +8,58 @@
 -- A library for creating JSON schemas and parsers at the same time.
 module Herald.Schema
   ( -- ** The core type
-    Herald
-  , schema
-  , parser
+    Herald,
+    schema,
+    parser,
 
     -- ** Defining a type
-  , array
-  , boolean
-  , null_
-  , number
-  , object
-  , string
+    array,
+    boolean,
+    null_,
+    number,
+    object,
+    string,
 
     -- ** Type-agnostic utilities
-  , title
-  , description
-  , deprecated
-  , enum
-  , example
-  , value
+    title,
+    description,
+    deprecated,
+    enum,
+    example,
+    value,
 
     -- ** Array utilities
-  , items
-  , element
-  , maxItems
-  , minItems
-  , unique
+    items,
+    element,
+    maxItems,
+    minItems,
+    unique,
 
     -- ** Number utilities
-  , integral
-  , maximum_
-  , exclusiveMaximum
-  , minimum_
-  , exclusiveMinimum
-  , multipleOf
+    integral,
+    maximum_,
+    exclusiveMaximum,
+    minimum_,
+    exclusiveMinimum,
+    multipleOf,
 
     -- ** Object utilities
-  , optional
-  , optional'
-  , required
-  , additionalProperties
+    optional,
+    optional',
+    required,
+    additionalProperties,
 
     -- ** String utilities
-  , maxLength
-  , minLength
-  , pattern_
-  ) where
+    maxLength,
+    minLength,
+    pattern_,
+  )
+where
 
 import Control.Applicative (Alternative (..))
 import Control.Lens hiding (chosen, element, enum, index)
 import Control.Monad (unless)
-import Data.Aeson ((.:), (.:?), Array, Key, Object, ToJSON, Value)
+import Data.Aeson (Array, Key, Object, ToJSON, Value, (.:), (.:?))
 import Data.Aeson qualified as JSON
 import Data.Aeson.Key qualified as Key
 import Data.Aeson.KeyMap (KeyMap)
@@ -100,14 +101,14 @@ instance Alternative (Herald input) where
       flatten :: Schema -> Schema -> Schema
       flatten this that
         | flattenable this, flattenable that = this <> that
-        | flattenable this = this & OpenApi.oneOf <>~ Just [ OpenApi.Inline that ]
-        | flattenable that = that & OpenApi.oneOf <>~ Just [ OpenApi.Inline this ]
-      flatten this that = mempty & OpenApi.oneOf ?~ map OpenApi.Inline [ this, that ]
+        | flattenable this = this & OpenApi.oneOf <>~ Just [OpenApi.Inline that]
+        | flattenable that = that & OpenApi.oneOf <>~ Just [OpenApi.Inline this]
+      flatten this that = mempty & OpenApi.oneOf ?~ map OpenApi.Inline [this, that]
 
       flattenable :: Schema -> Bool
-      flattenable x
-        = isJust (x ^. OpenApi.discriminator)
-            && isJust (x ^. OpenApi.oneOf)
+      flattenable x =
+        isJust (x ^. OpenApi.discriminator)
+          && isJust (x ^. OpenApi.oneOf)
 
   empty = Herald mempty mempty
 
@@ -127,7 +128,6 @@ array (Herald s p) = Herald (s . type_) (JSON.withArray "array" . p)
   where
     type_ :: Schema -> Schema
     type_ = OpenApi.type_ ?~ OpenApi.OpenApiArray
-
 
 -- | Declare that the schema be for a boolean type.
 --
@@ -150,7 +150,7 @@ boolean (Herald s p) = Herald (s . type_) (JSON.withBool "boolean" . p)
 null_ :: Herald Value ()
 null_ = Herald (OpenApi.type_ ?~ OpenApi.OpenApiNull) \_ -> \case
   JSON.Null -> pure ()
-  v         -> prependFailure "parsing null failed, " (typeMismatch "Null" v)
+  v -> prependFailure "parsing null failed, " (typeMismatch "Null" v)
 
 -- | Declare that the schema be for a number type.
 --
@@ -258,7 +258,7 @@ enum :: forall input output. (Ord input, Show input, ToJSON input) => Map input 
 enum values = Herald (OpenApi.enum_ ?~ map JSON.toJSON allowed) \_ key ->
   case Map.lookup key values of
     Just found -> pure found
-    Nothing    -> fail ("value must be one of: " ++ intercalate ", " (map show allowed))
+    Nothing -> fail ("value must be one of: " ++ intercalate ", " (map show allowed))
   where
     allowed :: [input]
     allowed = Map.keys values
@@ -270,7 +270,7 @@ enum values = Herald (OpenApi.enum_ ?~ map JSON.toJSON allowed) \_ key ->
 --   _ <- 'title' "Your favourite number"
 --   _ <- 'example' 72
 -- @
-example :: forall input. ToJSON input => input -> Herald input ()
+example :: forall input. (ToJSON input) => input -> Herald input ()
 example input = Herald (OpenApi.example ?~ JSON.toJSON input) \_ _ -> pure ()
 
 -- | Access the value being parsed.
@@ -294,15 +294,15 @@ value = Herald id \_ -> pure
 -- @
 items :: forall output. Herald Value output -> Herald Array [output]
 items (Herald s p) = Herald updated \spec arr -> do
-    let optic :: Traversal' OpenApi.Schema OpenApi.Schema
-        optic = OpenApi.items . _Just . _Object . OpenApi._Inline
+  let optic :: Traversal' OpenApi.Schema OpenApi.Schema
+      optic = OpenApi.items . _Just . _Object . OpenApi._Inline
 
-    let parse :: Value -> Parser output
-        parse input = case spec ^? optic of
-          Just inner -> p inner input
-          Nothing    -> fail "Internal error?"
+  let parse :: Value -> Parser output
+      parse input = case spec ^? optic of
+        Just inner -> p inner input
+        Nothing -> fail "Internal error?"
 
-    traverse parse (Vector.toList arr)
+  traverse parse (Vector.toList arr)
   where
     updated :: OpenApi.Schema -> OpenApi.Schema
     updated x = mempty & OpenApi.items ?~ OpenApiItemsObject (OpenApi.Inline (s x))
@@ -331,10 +331,11 @@ element (fromIntegral -> index) (Herald k p) = Herald (OpenApi.items %~ update) 
     Nothing -> fail "Internal error?"
   where
     update :: Maybe OpenApi.OpenApiItems -> Maybe OpenApi.OpenApiItems
-    update = Just . OpenApi.OpenApiItemsArray . insert . \case
-      Just (OpenApi.OpenApiItemsArray xs) ->
-        xs ++ replicate (index + 1 - length xs) (OpenApi.Inline mempty)
-      _ -> replicate (index + 1) (OpenApi.Inline mempty)
+    update =
+      Just . OpenApi.OpenApiItemsArray . insert . \case
+        Just (OpenApi.OpenApiItemsArray xs) ->
+          xs ++ replicate (index + 1 - length xs) (OpenApi.Inline mempty)
+        _ -> replicate (index + 1) (OpenApi.Inline mempty)
 
     insert :: [OpenApi.Referenced OpenApi.Schema] -> [OpenApi.Referenced OpenApi.Schema]
     insert = ix index . OpenApi._Inline %~ k
@@ -351,8 +352,8 @@ element (fromIntegral -> index) (Herald k p) = Herald (OpenApi.items %~ update) 
 -- @
 maxItems :: Natural -> Herald Array ()
 maxItems count = Herald (OpenApi.maxItems ?~ fromIntegral count) \_ input ->
- unless (length input <= fromIntegral count) do
-  fail ("array must not have more than " ++ show count ++ " items")
+  unless (length input <= fromIntegral count) do
+    fail ("array must not have more than " ++ show count ++ " items")
 
 -- | Declare that an array must not have fewer than a given number of elements.
 --
@@ -418,8 +419,9 @@ maximum_ limit = Herald (OpenApi.maximum_ ?~ limit) \spec input -> do
       exclusive = anyOf OpenApi.exclusiveMaximum isJust spec
 
   case compare input limit of
-    EQ | exclusive -> fail ("value should be less than " ++ show limit)
-       | otherwise -> pure ()
+    EQ
+      | exclusive -> fail ("value should be less than " ++ show limit)
+      | otherwise -> pure ()
     GT -> fail ("value should not exceed " ++ show limit)
     LT -> pure ()
 
@@ -452,8 +454,9 @@ minimum_ limit = Herald (OpenApi.minimum_ ?~ limit) \spec input -> do
       exclusive = anyOf OpenApi.exclusiveMinimum isJust spec
 
   case compare input limit of
-    EQ | exclusive -> fail ("value should be more than " ++ show limit)
-       | otherwise -> pure ()
+    EQ
+      | exclusive -> fail ("value should be more than " ++ show limit)
+      | otherwise -> pure ()
     LT -> fail ("value should not be less than " ++ show limit)
     GT -> pure ()
 
@@ -496,27 +499,27 @@ optional :: forall output. Key -> Herald Value output -> Herald Object (Maybe ou
 optional key herald = Herald update \_ obj -> obj .:? key >>= traverse (parser herald)
   where
     update :: OpenApi.Schema -> OpenApi.Schema
-    update specification
-      = specification
-          & OpenApi.properties . at (Key.toText key) ?~ OpenApi.Inline (schema herald)
-          & OpenApi.nullable ?~ True
+    update specification =
+      specification
+        & OpenApi.properties . at (Key.toText key) ?~ OpenApi.Inline (schema herald)
+        & OpenApi.nullable ?~ True
 
 -- | Declare an optional key within a given object, as well as a fallback.
 --
 -- @
 -- optional'Schema = 'object' do
 --   'optional' "myspace_url" "I can't remember" $ 'string' do
-  --   pure ()
+--   pure ()
 -- @
-optional' :: forall output. ToJSON output => Key -> output -> Herald Value output -> Herald Object output
+optional' :: forall output. (ToJSON output) => Key -> output -> Herald Value output -> Herald Object output
 optional' key fallback herald = Herald update \_ obj -> obj .:? key >>= maybe (pure fallback) (parser herald)
   where
     update :: OpenApi.Schema -> OpenApi.Schema
-    update specification
-      = specification
-          & OpenApi.properties . at (Key.toText key) ?~ OpenApi.Inline (schema herald)
-          & OpenApi.nullable ?~ True
-          & OpenApi.default_ ?~ JSON.toJSON fallback
+    update specification =
+      specification
+        & OpenApi.properties . at (Key.toText key) ?~ OpenApi.Inline (schema herald)
+        & OpenApi.nullable ?~ True
+        & OpenApi.default_ ?~ JSON.toJSON fallback
 
 -- | Declare a required key within a given object.
 --
@@ -537,10 +540,10 @@ required key_ herald = Herald update \_ obj -> obj .: key_ >>= parser herald
     key = Key.toText key_
 
     update :: OpenApi.Schema -> OpenApi.Schema
-    update spec
-      = spec
-          & OpenApi.properties . at key ?~ OpenApi.Inline (schema herald)
-          & OpenApi.required %~ cons key
+    update spec =
+      spec
+        & OpenApi.properties . at key ?~ OpenApi.Inline (schema herald)
+        & OpenApi.required %~ cons key
 
 -- | Declare that all properties /not/ declared as 'required' or 'optional'
 -- adhere to a given schema.
@@ -557,8 +560,9 @@ additionalProperties (Herald k p) = Herald update \spec obj ->
     isDefined :: OpenApi.Schema -> Key -> Bool
     isDefined spec i = has (OpenApi.properties . ix (Key.toText i)) spec
 
-    update = OpenApi.additionalProperties ?~
-      OpenApi.AdditionalPropertiesSchema (OpenApi.Inline (k mempty))
+    update =
+      OpenApi.additionalProperties
+        ?~ OpenApi.AdditionalPropertiesSchema (OpenApi.Inline (k mempty))
 
 -- | Declare that a string has a given maximum length.
 --

@@ -15,45 +15,45 @@ import Test.Hspec (Spec, describe, it)
 spec_angle_zero :: Spec
 spec_angle_zero = do
   describe "degrees" do
-    it "degrees / grades"  do 0 degrees `shouldBeApprox` 0 grades
+    it "degrees / grades" do 0 degrees `shouldBeApprox` 0 grades
     it "degrees / radians" do 0 degrees `shouldBeApprox` 0 radians
-    it "degrees / turns"   do 0 degrees `shouldBeApprox` 0 turns
+    it "degrees / turns" do 0 degrees `shouldBeApprox` 0 turns
 
   describe "grades" do
     it "grades / degrees" do 0 grades `shouldBeApprox` 0 degrees
     it "grades / radians" do 0 grades `shouldBeApprox` 0 radians
-    it "grades / turns"   do 0 grades `shouldBeApprox` 0 turns
+    it "grades / turns" do 0 grades `shouldBeApprox` 0 turns
 
   describe "radians" do
     it "radians / degrees" do 0 radians `shouldBeApprox` 0 degrees
     it "radians / radians" do 0 radians `shouldBeApprox` 0 radians
-    it "radians / turns"   do 0 radians `shouldBeApprox` 0 turns
+    it "radians / turns" do 0 radians `shouldBeApprox` 0 turns
 
   describe "turns" do
     it "turns / degrees" do 0 turns `shouldBeApprox` 0 degrees
     it "turns / radians" do 0 turns `shouldBeApprox` 0 radians
-    it "turns / turns"   do 0 turns `shouldBeApprox` 0 turns
+    it "turns / turns" do 0 turns `shouldBeApprox` 0 turns
 
 spec_angle_full_rotation :: Spec
 spec_angle_full_rotation = do
   describe "degrees" do
-    it "degrees / grades"  do 360 degrees `shouldBeApprox` 400 grades
+    it "degrees / grades" do 360 degrees `shouldBeApprox` 400 grades
     it "degrees / radians" do 360 degrees `shouldBeApprox` (2 * pi) radians
-    it "degrees / turns"   do 360 degrees `shouldBeApprox` 1 turn
+    it "degrees / turns" do 360 degrees `shouldBeApprox` 1 turn
 
   describe "grades" do
     it "grades / degrees" do 400 grades `shouldBeApprox` 360 degrees
     it "grades / radians" do 400 grades `shouldBeApprox` (2 * pi) radians
-    it "grades / turns"   do 400 grades `shouldBeApprox` 1 turn
+    it "grades / turns" do 400 grades `shouldBeApprox` 1 turn
 
   describe "radians" do
     it "radians / degrees" do (2 * pi) radians `shouldBeApprox` 360 degrees
-    it "radians / grades"  do (2 * pi) radians `shouldBeApprox` 400 grades
-    it "radians / turns"   do (2 * pi) radians `shouldBeApprox` 1 turn
+    it "radians / grades" do (2 * pi) radians `shouldBeApprox` 400 grades
+    it "radians / turns" do (2 * pi) radians `shouldBeApprox` 1 turn
 
   describe "turns" do
     it "turns / degrees" do 1 turn `shouldBeApprox` 360 degrees
-    it "turns / grades"  do 1 turn `shouldBeApprox` 400 grades
+    it "turns / grades" do 1 turn `shouldBeApprox` 400 grades
     it "turns / radians" do 1 turn `shouldBeApprox` 1 turn
 
 ---

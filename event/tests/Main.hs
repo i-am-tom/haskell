@@ -1,8 +1,9 @@
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE LambdaCase #-}
+
 module Main where
 
-import Control.Applicative ((<|>), empty)
+import Control.Applicative (empty, (<|>))
 import Control.Monad (guard)
 import Data.Event
 import Data.Foldable (for_)
@@ -21,7 +22,7 @@ main = hspec do
         subscribe source \x -> do
           next <- atomicModifyIORef' queue \case
             c : cs -> (cs, c)
-            [    ] -> error "??"
+            [] -> error "??"
 
           x `shouldBe` next
 
@@ -81,7 +82,7 @@ main = hspec do
   prop "create" \(xs :: [Int]) (ys :: [Int]) -> do
     (source, push) <- create
 
-    cancel <- source `shouldYield`  xs
+    cancel <- source `shouldYield` xs
     _ <- source `shouldYield` (xs <> ys)
 
     mapM_ push xs *> cancel

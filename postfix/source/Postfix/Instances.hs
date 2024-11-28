@@ -5,7 +5,7 @@
 -- Splices for generating the postfix instances.
 module Postfix.Instances where
 
-import Language.Haskell.TH (DecsQ, Q, Name, Type)
+import Language.Haskell.TH (DecsQ, Name, Q, Type)
 import Language.Haskell.TH qualified as TH
 
 -- | Generate a `Num` instance for a given postfix unit.
@@ -18,17 +18,17 @@ num source target = do
       inferred = TH.conT target
 
   [d|
-      instance Num i => Num ((i -> $written) -> $inferred) where
-        fromInteger x k = from (k (fromInteger x))
+    instance (Num i) => Num ((i -> $written) -> $inferred) where
+      fromInteger x k = from (k (fromInteger x))
 
-        (+) = liftA2 (+)
-        (*) = liftA2 (*)
-        (-) = liftA2 (-)
+      (+) = liftA2 (+)
+      (*) = liftA2 (*)
+      (-) = liftA2 (-)
 
-        abs = fmap abs
+      abs = fmap abs
 
-        negate = fmap negate
-        signum = fmap signum
+      negate = fmap negate
+      signum = fmap signum
     |]
 
 -- | Generate a `Fractional` instance for a given postfix unit.
@@ -41,10 +41,10 @@ fractional source target = do
       inferred = TH.conT target
 
   [d|
-      instance Fractional i => Fractional ((i -> $written) -> $inferred) where
-        fromRational x k = from (k (fromRational x))
-        recip = fmap recip
-        (/)   = liftA2 (/)
+    instance (Fractional i) => Fractional ((i -> $written) -> $inferred) where
+      fromRational x k = from (k (fromRational x))
+      recip = fmap recip
+      (/) = liftA2 (/)
     |]
 
 -- | Generate a `Floating` instance for a given postfix unit.
@@ -57,22 +57,21 @@ floating source target = do
       inferred = TH.conT target
 
   [d|
-      instance Floating i => Floating ((i -> $written) -> $inferred) where
-        pi k = from (k pi)
+    instance (Floating i) => Floating ((i -> $written) -> $inferred) where
+      pi k = from (k pi)
 
-        exp   = fmap exp
-        log   = fmap log
-        sin   = fmap sin
-        cos   = fmap cos
-        tan   = fmap tan
-        asin  = fmap asin
-        acos  = fmap acos
-        atan  = fmap atan
-        sinh  = fmap sinh
-        cosh  = fmap cosh
-        tanh  = fmap tanh
-        asinh = fmap asinh
-        acosh = fmap acosh
-        atanh = fmap atanh
+      exp = fmap exp
+      log = fmap log
+      sin = fmap sin
+      cos = fmap cos
+      tan = fmap tan
+      asin = fmap asin
+      acos = fmap acos
+      atan = fmap atan
+      sinh = fmap sinh
+      cosh = fmap cosh
+      tanh = fmap tanh
+      asinh = fmap asinh
+      acosh = fmap acosh
+      atanh = fmap atanh
     |]
-

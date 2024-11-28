@@ -6,13 +6,13 @@
 
 module Main where
 
+import Data.Kind (Type)
 import Data.Variant
 import README ()
 import Test.Hspec (Expectation, hspec, it, shouldBe)
-import Data.Kind (Type)
 
-type T :: [ Type ]
-type T = '[ Int, String, Bool ]
+type T :: [Type]
+type T = '[Int, String, Bool]
 
 main :: IO ()
 main = hspec do

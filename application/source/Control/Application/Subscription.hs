@@ -6,14 +6,13 @@
 -- |
 -- Signals that produce events.
 module Control.Application.Subscription
-  ( Subscription
-  , makeSubscription
-
-  , Subscriptions
-
-  , update
-  , fps
-  ) where
+  ( Subscription,
+    makeSubscription,
+    Subscriptions,
+    update,
+    fps,
+  )
+where
 
 import Control.Concurrent (threadDelay)
 import Control.Concurrent.Async.Managed (Async)
@@ -73,11 +72,9 @@ update k current incoming = wither go (align current prepared)
       -- If the subscription no longer features in the incoming subscriptions,
       -- then it should be cancelled.
       This async -> Nothing <$ Async.cancel async
-
       -- If the subscription appears in both the current and incoming sets,
       -- then we can maintain the subscription.
       These async _ -> pure (Just async)
-
       -- If the subscription appears in the incoming set but not the current
       -- set, then we need to create the new 'Async' listener.
       That (Subscription subscription) -> fmap Just do

@@ -16,7 +16,7 @@ main = hspec do
   it "Lifts" do
     let x = fmap (\f -> f True False) and_
         y = fmap (\f -> f True False) and_
-        z = fmap (\f -> f True  True) and_
+        z = fmap (\f -> f True True) and_
 
     x `shouldBe` y
     x `shouldNotBe` z
@@ -24,7 +24,7 @@ main = hspec do
   it "Lifts twice" do
     let x = liftA2 (\f g -> f True False && g True False) and_ or_
         y = liftA2 (\f g -> f True False && g True False) and_ or_
-        z = liftA2 (\f g -> f True  True && g True  True) and_ or_
+        z = liftA2 (\f g -> f True True && g True True) and_ or_
 
     x `shouldBe` y
     x `shouldNotBe` z

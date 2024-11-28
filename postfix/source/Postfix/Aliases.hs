@@ -23,12 +23,11 @@ lowercase name = do
 
       let outer :: TH.Q TH.Type
           outer = TH.conT name
-      
-      signature <- fmap (TH.SigD prepared) [t| $inner -> $outer |]
-      statement <- [d| $(TH.varP prepared) = $(TH.conE uppercase) |]
+
+      signature <- fmap (TH.SigD prepared) [t|$inner -> $outer|]
+      statement <- [d|$(TH.varP prepared) = $(TH.conE uppercase)|]
 
       pure (signature : statement)
-
     Nothing -> pure []
 
 -- | Make a singular pattern synonym for a constructor.
@@ -47,12 +46,11 @@ singular name = do
       let variable :: TH.Name
           variable = TH.mkName "__inner"
 
-      signature <- fmap (TH.PatSynSigD prepared) [t| $inner -> $outer |]
+      signature <- fmap (TH.PatSynSigD prepared) [t|$inner -> $outer|]
       statement <- TH.patSynD prepared (TH.prefixPatSyn [variable]) TH.implBidir do
         TH.conP original [TH.varP variable]
 
       pure [signature, statement]
-
     Nothing -> pure []
 
 -- | Make a lowercase, singular pattern synonym for a constructor.
@@ -67,22 +65,23 @@ lowercaseSingular name = do
 
       let outer :: TH.Q TH.Type
           outer = TH.conT name
-      
-      signature <- fmap (TH.SigD prepared) [t| $inner -> $outer |]
-      statement <- [d| $(TH.varP prepared) = $(TH.conE uppercase) |]
+
+      signature <- fmap (TH.SigD prepared) [t|$inner -> $outer|]
+      statement <- [d|$(TH.varP prepared) = $(TH.conE uppercase)|]
 
       pure (signature : statement)
-
     Nothing -> pure []
 
 -- | Make the first letter of a 'TH.Name' lowercase. Returns 'Nothing' for
 -- empty names.
 makeLowercaseName :: TH.Name -> Maybe TH.Name
 makeLowercaseName = fmap go . uncons . TH.nameBase
-  where go (c, cs) = TH.mkName (toLower c : cs)
+  where
+    go (c, cs) = TH.mkName (toLower c : cs)
 
 -- | Make a name singular by removing the 's' on the end. Fails for names that
 -- don't end with an 's'. This could be improved a lot.
 makeSingularName :: TH.Name -> Maybe TH.Name
 makeSingularName name = unsnoc (TH.nameBase name) >>= go
-  where go (cs, c) = TH.mkName cs <$ guard (c == 's')
+  where
+    go (cs, c) = TH.mkName cs <$ guard (c == 's')

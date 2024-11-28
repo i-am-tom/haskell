@@ -36,9 +36,12 @@ law_action_composition gen = property do
 
 ---
 
-law_function_change
-  :: (Show x, Change y, Show y, Change z, Eq z, Show z)
-  => Gen x -> Gen y -> (x -> y -> z) -> Property
+law_function_change ::
+  (Show x, Change y, Show y, Change z, Eq z, Show z) =>
+  Gen x ->
+  Gen y ->
+  (x -> y -> z) ->
+  Property
 law_function_change gen_x gen_y k = property do
   f <- fmap k (forAll gen_x)
   g <- fmap k (forAll gen_x)
@@ -46,18 +49,24 @@ law_function_change gen_x gen_y k = property do
 
   (f <~ (g \\ f)) x === g x
 
-law_function_action_identity
-  :: (Show x, Change y, Show y, Change z, Eq z, Show z)
-  => Gen x -> Gen y -> (x -> y -> z) -> Property
+law_function_action_identity ::
+  (Show x, Change y, Show y, Change z, Eq z, Show z) =>
+  Gen x ->
+  Gen y ->
+  (x -> y -> z) ->
+  Property
 law_function_action_identity gen_x gen_y k = property do
   f <- fmap k (forAll gen_x)
   x <- forAll gen_y
 
   (f <~ mempty) x === f x
 
-law_function_action_composition
-  :: (Show x, Change y, Show y, Change z, Eq z, Show z)
-  => Gen x -> Gen y -> (x -> y -> z) -> Property
+law_function_action_composition ::
+  (Show x, Change y, Show y, Change z, Eq z, Show z) =>
+  Gen x ->
+  Gen y ->
+  (x -> y -> z) ->
+  Property
 law_function_action_composition gen_x gen_y k = property do
   f <- fmap k (forAll gen_x)
   g <- fmap k (forAll gen_x)
@@ -122,7 +131,7 @@ hprop_pair_action_composition = law_action_composition gen_pair
 ---
 
 gen_either :: Gen (Either Int Bool)
-gen_either = Gen.choice [ fmap Left gen_int, fmap Right Gen.bool ]
+gen_either = Gen.choice [fmap Left gen_int, fmap Right Gen.bool]
 
 hprop_either_change :: Property
 hprop_either_change = law_change gen_either
@@ -136,10 +145,10 @@ hprop_either_action_composition = law_action_composition gen_either
 ---
 
 type State :: Type
-data State = State { this :: Int, that :: Int }
+data State = State {this :: Int, that :: Int}
   deriving stock (Eq, Ord, Show)
   deriving stock (Generic)
-  deriving Change via (Generically State)
+  deriving (Change) via (Generically State)
 
 gen_state :: Gen State
 gen_state = liftA2 State gen_int gen_int
@@ -156,41 +165,41 @@ hprop_state_action_composition = law_action_composition gen_state
 ---
 
 hprop_bool_to_bool_change :: Property
-hprop_bool_to_bool_change
-  = law_function_change Gen.bool Gen.bool (/=)
+hprop_bool_to_bool_change =
+  law_function_change Gen.bool Gen.bool (/=)
 
 hprop_bool_to_bool_action_identity :: Property
-hprop_bool_to_bool_action_identity
-  = law_function_action_identity Gen.bool Gen.bool (/=)
+hprop_bool_to_bool_action_identity =
+  law_function_action_identity Gen.bool Gen.bool (/=)
 
 hprop_bool_to_bool_action_composition :: Property
-hprop_bool_to_bool_action_composition
-  = law_function_action_composition Gen.bool Gen.bool (/=)
+hprop_bool_to_bool_action_composition =
+  law_function_action_composition Gen.bool Gen.bool (/=)
 
 ---
 
 hprop_int_to_int_change :: Property
-hprop_int_to_int_change
-  = law_function_change gen_int gen_int (+)
+hprop_int_to_int_change =
+  law_function_change gen_int gen_int (+)
 
 hprop_int_to_int_action_identity :: Property
-hprop_int_to_int_action_identity
-  = law_function_action_identity gen_int gen_int (+)
+hprop_int_to_int_action_identity =
+  law_function_action_identity gen_int gen_int (+)
 
 hprop_int_to_int_action_composition :: Property
-hprop_int_to_int_action_composition
-  = law_function_action_composition gen_int gen_int (+)
+hprop_int_to_int_action_composition =
+  law_function_action_composition gen_int gen_int (+)
 
 ---
 
 hprop_int_to_bool_change :: Property
-hprop_int_to_bool_change
-  = law_function_change gen_int gen_int (==)
+hprop_int_to_bool_change =
+  law_function_change gen_int gen_int (==)
 
 hprop_int_to_bool_action_identity :: Property
-hprop_int_to_bool_action_identity
-  = law_function_action_identity gen_int gen_int (==)
+hprop_int_to_bool_action_identity =
+  law_function_action_identity gen_int gen_int (==)
 
 hprop_int_to_bool_action_composition :: Property
-hprop_int_to_bool_action_composition
-  = law_function_action_composition gen_int gen_int (==)
+hprop_int_to_bool_action_composition =
+  law_function_action_composition gen_int gen_int (==)

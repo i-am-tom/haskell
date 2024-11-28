@@ -18,20 +18,19 @@ import Text.Regex.PCRE ((=~))
 type Test :: Type
 data Test
   = Acceptance
-      { _input  :: Value
-      , _schema :: Herald Value ()
+      { _input :: Value,
+        _schema :: Herald Value ()
       }
-
   | Rejection
-      { _input     :: Value
-      , _schema    :: Herald Value ()
-      , _parser    :: String
-      , _validator :: [String]
+      { _input :: Value,
+        _schema :: Herald Value (),
+        _parser :: String,
+        _validator :: [String]
       }
 
 test :: Test -> Spec
 test = \case
-  Acceptance { _input, _schema } -> do
+  Acceptance {_input, _schema} -> do
     it "parser" do
       parseEither (parser _schema) _input
         `shouldBe` Right ()
@@ -39,8 +38,7 @@ test = \case
     it "validator" do
       validateJSONWithPatternChecker checker mempty (schema _schema) _input
         `shouldBe` []
-
-  Rejection { _input, _schema, _parser, _validator } -> do
+  Rejection {_input, _schema, _parser, _validator} -> do
     it "parser" do
       parseEither (parser _schema) _input
         `shouldBe` Left _parser
