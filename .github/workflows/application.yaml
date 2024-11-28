@@ -1,7 +1,7 @@
 name: application
 
 on:
-  push:
+  pull_request:
 
 jobs:
   test:
