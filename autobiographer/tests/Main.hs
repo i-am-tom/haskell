@@ -1,5 +1,6 @@
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE TemplateHaskell #-}
 module Main (main) where
 
 import Control.Applicative (Alternative ((<|>)))
@@ -17,6 +18,7 @@ import Hedgehog.Range qualified as Range
 {- HLINT ignore "Monoid law, left identity" -}
 {- HLINT ignore "Use camelCase" -}
 {- HLINT ignore "Redundant bracket" -}
+{- HLINT ignore "Unused LANGUAGE pragma" -}
 
 type Timeliner :: Type
 data Timeliner
@@ -154,4 +156,4 @@ prop_final = property do
     === snapshot y 0
 
 main :: IO Bool
-main = checkParallel $$(discover)
+main = checkParallel $$discover
