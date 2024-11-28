@@ -10,8 +10,6 @@ library
   build-depends:
     , async
     , base
-    , containers
-    , clock
     , hashable
     , managed
     , managed-async
