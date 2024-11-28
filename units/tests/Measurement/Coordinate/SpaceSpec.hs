@@ -1,4 +1,6 @@
 {-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE DuplicateRecordFields #-}
+
 module Measurement.Coordinate.SpaceSpec where
 
 import Data.Approx (Approx ((~=)))
