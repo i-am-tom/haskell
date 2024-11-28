@@ -7,7 +7,7 @@ import Hedgehog ((===), Gen, Property, diff, forAll, property)
 import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
 
-{-# ANN module "HLint: use camelCase" #-}
+{- HLINT ignore "Use camelCase" -}
 
 law_reflexivity :: (Approx x, Eq x, Show x) => Gen x -> Property
 law_reflexivity xs = property do

@@ -1,5 +1,5 @@
 {-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE DuplicateRecordFields #-}
 
 module Measurement.Coordinate.SpaceSpec where
 
@@ -11,7 +11,7 @@ import Measurement.AngleSpec (gen_radians)
 import Measurement.Coordinate.Space
 import Measurement.Helpers (law_roundtrip)
 
-{-# ANN module "HLint: use camelCase" #-}
+{- HLINT ignore "Use camelCase" -}
 
 hprop_cylindrical_origin_distance :: Property
 hprop_cylindrical_origin_distance = property do

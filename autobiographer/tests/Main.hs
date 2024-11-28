@@ -13,6 +13,13 @@ import Hedgehog ((===), Gen, Property, PropertyT, checkParallel, discover, forAl
 import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
 
+{- HLINT ignore "Functor law" -}
+{- HLINT ignore "Monoid law, right identity" -}
+{- HLINT ignore "Monoid law, left identity" -}
+{- HLINT ignore "Use camelCase" -}
+{- HLINT ignore "Redundant bracket" -}
+{- HLINT ignore "Unused LANGUAGE pragma" -}
+
 type Timeliner :: Type
 data Timeliner
   = Alt [ Timeliner ]
@@ -149,4 +156,4 @@ prop_final = property do
     === snapshot y 0
 
 main :: IO Bool
-main = checkParallel $$(discover)
+main = checkParallel $$discover
