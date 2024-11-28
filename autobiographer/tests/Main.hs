@@ -16,6 +16,7 @@ import Hedgehog.Range qualified as Range
 {- HLINT ignore "Monoid law, right identity" -}
 {- HLINT ignore "Monoid law, left identity" -}
 {- HLINT ignore "Use camelCase" -}
+{- HLINT ignore "Redundant bracket" -}
 
 type Timeliner :: Type
 data Timeliner
@@ -153,4 +154,4 @@ prop_final = property do
     === snapshot y 0
 
 main :: IO Bool
-main = checkParallel $$discover
+main = checkParallel $$(discover)

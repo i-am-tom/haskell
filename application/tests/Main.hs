@@ -38,7 +38,7 @@ main = do
 
         , subscriptions = \state ->
             let mvar :: MVar Event
-                mvar = if length state `mod` 2 == 0 then first else second
+                mvar = if even (length state) then first else second
             in
               [ makeSubscription \k -> forever (takeMVar mvar >>= k)
               ]
