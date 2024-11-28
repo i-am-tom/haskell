@@ -8,8 +8,9 @@ import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
 import Measurement.Angle
 import Measurement.Helpers (law_roundtrip, shouldBeApprox)
-import Test.Hspec (Spec)
-import Test.Hspec (describe, it)
+import Test.Hspec (Spec, describe, it)
+
+{- HLINT ignore "Use camelCase" -}
 
 spec_angle_zero :: Spec
 spec_angle_zero = do

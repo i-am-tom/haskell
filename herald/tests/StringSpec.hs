@@ -56,11 +56,11 @@ spec_string_pattern_bad = test Rejection
   { _input     = "abcd"
   , _parser    = "Error in $: input should match the regular expression ^a+$"
   , _validator = ["string does not match pattern \"^a+$\""]
-  , _schema    = string (pattern "^a+$")
+  , _schema    = string (pattern_ "^a+$")
   }
 
 spec_string_pattern_good :: Spec
 spec_string_pattern_good = test Acceptance
   { _input  = "abcd"
-  , _schema = string (pattern "a..d")
+  , _schema = string (pattern_ "a..d")
   }

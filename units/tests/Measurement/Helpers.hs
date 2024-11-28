@@ -6,10 +6,11 @@ module Measurement.Helpers where
 import Control.Monad (unless)
 import Data.Approx (Approx ((~=)))
 import Hedgehog (Gen, Property, annotateShow, diff, forAll, property)
-import Test.Hspec (Expectation, HasCallStack)
-import Test.Hspec (expectationFailure)
+import Test.Hspec (Expectation, HasCallStack, expectationFailure)
 import Data.Kind (Constraint, Type)
 import Witch (From (from))
+
+{- HLINT ignore "Use camelCase" -}
 
 type (><) :: Type -> Type -> Constraint
 type x >< y = (From x y, From y x)

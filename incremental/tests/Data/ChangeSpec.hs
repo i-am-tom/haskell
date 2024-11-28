@@ -11,6 +11,8 @@ import Hedgehog
 import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
 
+{- HLINT ignore "Use camelCase" -}
+
 law_change :: (Change x, Eq x, Show x) => Gen x -> Property
 law_change gen = property do
   x <- forAll gen

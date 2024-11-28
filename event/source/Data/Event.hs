@@ -1,6 +1,5 @@
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE DerivingVia #-}
-{-# LANGUAGE LambdaCase #-}
 
 -- | A representation of event streams.
 --
@@ -23,7 +22,7 @@ import Data.Kind (Type)
 import Data.Monoid (Ap (Ap))
 import Witherable (Filterable (..))
 
-{-# ANN module "HLint: Use const" #-}
+{- HLINT ignore "Avoid lambda" -}
 
 -- | An 'Source' is a function that takes an event handler and returns an
 -- ""unsubscribe"" action. This type makes no comment on how synchronously or

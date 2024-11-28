@@ -1,7 +1,6 @@
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE DerivingVia #-}
 {-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE MultiWayIf #-}
 {-# LANGUAGE StrictData #-}
 {-# LANGUAGE ViewPatterns #-}
 
@@ -53,7 +52,7 @@ module Herald.Schema
     -- ** String utilities
   , maxLength
   , minLength
-  , pattern
+  , pattern_
   ) where
 
 import Control.Applicative (Alternative (..))
@@ -151,7 +150,7 @@ boolean (Herald s p) = Herald (s . type_) (JSON.withBool "boolean" . p)
 null_ :: Herald Value ()
 null_ = Herald (OpenApi.type_ ?~ OpenApi.OpenApiNull) \_ -> \case
   JSON.Null -> pure ()
-  v         -> prependFailure ("parsing null failed, ") (typeMismatch "Null" v)
+  v         -> prependFailure "parsing null failed, " (typeMismatch "Null" v)
 
 -- | Declare that the schema be for a number type.
 --
@@ -193,7 +192,7 @@ object (Herald s p) = Herald (s . type_) (JSON.withObject "object" . p)
 --   _ <- 'title' "Name Input"
 --   _ <- 'description' "A name represented in ASCII characters"
 --
---   'pattern' "^[a-z'- ]+$"
+--   'pattern_' "^[a-z'- ]+$"
 --   'value'
 -- @
 string :: forall output. Herald Text output -> Herald Value output
@@ -306,7 +305,7 @@ items (Herald s p) = Herald updated \spec arr -> do
     traverse parse (Vector.toList arr)
   where
     updated :: OpenApi.Schema -> OpenApi.Schema
-    updated = \x -> mempty & OpenApi.items ?~ OpenApiItemsObject (OpenApi.Inline (s x))
+    updated x = mempty & OpenApi.items ?~ OpenApiItemsObject (OpenApi.Inline (s x))
 
 -- | Declare a schema for a specific element of the tuple.
 --
@@ -552,11 +551,11 @@ required key_ herald = Herald update \_ obj -> obj .: key_ >>= parser herald
 --   'additionalProperties' stringSchema
 -- @
 additionalProperties :: forall output. Herald Value output -> Herald Object (KeyMap output)
-additionalProperties (Herald k p) = Herald (update) \spec obj ->
+additionalProperties (Herald k p) = Herald update \spec obj ->
   KeyMap.traverse (p spec) (KeyMap.filterWithKey (const . not . isDefined spec) obj)
   where
     isDefined :: OpenApi.Schema -> Key -> Bool
-    isDefined spec i = has (OpenApi.properties . at (Key.toText i) . _Just) spec
+    isDefined spec i = has (OpenApi.properties . ix (Key.toText i)) spec
 
     update = OpenApi.additionalProperties ?~
       OpenApi.AdditionalPropertiesSchema (OpenApi.Inline (k mempty))
@@ -598,12 +597,12 @@ minLength count = Herald (OpenApi.minLength ?~ fromIntegral count) \_ input ->
 -- @
 -- patternSchema = 'string' do
 --   _ <- 'title' "DNA Input"
---   _ <- 'pattern' "[AGCT]*"
+--   _ <- 'pattern_' "[AGCT]*"
 --
 --   'value'
 -- @
-pattern :: OpenApi.Pattern -> Herald Text ()
-pattern regex = Herald (OpenApi.pattern ?~ regex) \_ input ->
+pattern_ :: OpenApi.Pattern -> Herald Text ()
+pattern_ regex = Herald (OpenApi.pattern ?~ regex) \_ input ->
   unless (Text.unpack input =~ Text.unpack regex) do
     fail ("input should match the regular expression " ++ Text.unpack regex)
 

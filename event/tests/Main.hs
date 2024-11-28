@@ -1,6 +1,5 @@
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE ViewPatterns #-}
 module Main where
 
 import Control.Applicative ((<|>), empty)
@@ -47,16 +46,16 @@ main = hspec do
   prop "catMaybes" \(xs :: [Maybe Int]) -> do
     (source, push) <- create
 
-    _ <- catMaybes source `shouldYield` (catMaybes xs)
+    _ <- catMaybes source `shouldYield` catMaybes xs
     mapM_ push xs
 
   prop "mapMaybe" \(xs :: [Int]) -> do
     (source, push) <- create
 
     let f :: Int -> Maybe Int
-        f x = x <$ guard (mod x 2 == 0)
+        f x = x <$ guard (even x)
 
-    _ <- mapMaybe f source `shouldYield` (mapMaybe f xs)
+    _ <- mapMaybe f source `shouldYield` mapMaybe f xs
     mapM_ push xs
 
   prop "<*>" \(x :: Int) (xss :: [Int]) -> do

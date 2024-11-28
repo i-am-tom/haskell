@@ -48,7 +48,7 @@ singular name = do
           variable = TH.mkName "__inner"
 
       signature <- fmap (TH.PatSynSigD prepared) [t| $inner -> $outer |]
-      statement <- TH.patSynD prepared (TH.prefixPatSyn [variable]) (TH.implBidir) do
+      statement <- TH.patSynD prepared (TH.prefixPatSyn [variable]) TH.implBidir do
         TH.conP original [TH.varP variable]
 
       pure [signature, statement]

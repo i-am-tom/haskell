@@ -61,10 +61,10 @@ qq = do
         pure (iterate there here !! count)
 
     , quotePat = \input -> do
-        (count, pattern) <- parse (parser parsePat) input
+        (count, pat) <- parse (parser parsePat) input
 
         let here :: Pat
-            here = ConP (mkName "Here") [] [pattern]
+            here = ConP (mkName "Here") [] [pat]
 
             there :: Pat -> Pat
             there more = ConP (mkName "There") [] [more]

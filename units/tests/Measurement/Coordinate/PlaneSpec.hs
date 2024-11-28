@@ -1,5 +1,4 @@
 {-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE RecordWildCards #-}
 
 module Measurement.Coordinate.PlaneSpec where
 
@@ -11,7 +10,7 @@ import Measurement.AngleSpec (gen_radians)
 import Measurement.Coordinate.Plane
 import Measurement.Helpers (law_roundtrip)
 
-{-# ANN module "HLint: use camelCase" #-}
+{- HLINT ignore "Use camelCase" -}
 
 hprop_polar_origin_distance :: Property
 hprop_polar_origin_distance = property do

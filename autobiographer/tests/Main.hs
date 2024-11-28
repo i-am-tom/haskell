@@ -1,6 +1,5 @@
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE TemplateHaskell #-}
 module Main (main) where
 
 import Control.Applicative (Alternative ((<|>)))
@@ -12,6 +11,11 @@ import Data.Set qualified as Set
 import Hedgehog ((===), Gen, Property, PropertyT, checkParallel, discover, forAll, property)
 import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
+
+{- HLINT ignore "Functor law" -}
+{- HLINT ignore "Monoid law, right identity" -}
+{- HLINT ignore "Monoid law, left identity" -}
+{- HLINT ignore "Use camelCase" -}
 
 type Timeliner :: Type
 data Timeliner
@@ -149,4 +153,4 @@ prop_final = property do
     === snapshot y 0
 
 main :: IO Bool
-main = checkParallel $$(discover)
+main = checkParallel $$discover

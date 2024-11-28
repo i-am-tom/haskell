@@ -9,8 +9,7 @@ module Data.Via where
 import Data.Approx (Approx (..))
 import Data.Coerce (Coercible, coerce)
 import Data.Function (on)
-import Data.Kind (Constraint)
-import Data.Kind (Type)
+import Data.Kind (Constraint, Type)
 import Witch (From (from))
 
 -- | A newtype wrapper around the @y@ type. We use this to say, "I can map @x@
