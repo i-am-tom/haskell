@@ -1,0 +1,15 @@
+name: code quality
+
+on:
+  pull_request:
+
+jobs:
+  hlint:
+    runs-on: ubuntu-atest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: haskell-actions/hlint-setup@v2
+    - uses: haskell-actions/hlint-run@v2
+      with:
+        fail-on: warning
+        path: '["approx", "autobiographer", "event", "herald", "incremental", "managed-async", "paparazzi", "postfix", "units", "via"]'
