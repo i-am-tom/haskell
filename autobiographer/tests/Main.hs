@@ -1,6 +1,7 @@
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TemplateHaskell #-}
+
 module Main (main) where
 
 import Control.Applicative (Alternative ((<|>)))
@@ -9,7 +10,7 @@ import Data.Foldable (asum)
 import Data.Kind (Type)
 import Data.Set (Set)
 import Data.Set qualified as Set
-import Hedgehog ((===), Gen, Property, PropertyT, checkParallel, discover, forAll, property)
+import Hedgehog (Gen, Property, PropertyT, checkParallel, discover, forAll, property, (===))
 import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
 
@@ -22,7 +23,7 @@ import Hedgehog.Range qualified as Range
 
 type Timeliner :: Type
 data Timeliner
-  = Alt [ Timeliner ]
+  = Alt [Timeliner]
   | Ap Timeliner Timeliner
   | Pure
   | Over Duration Double Double
@@ -30,25 +31,27 @@ data Timeliner
   deriving (Eq, Ord, Show)
 
 gen_timeliner :: Gen Timeliner
-gen_timeliner = Gen.recursive Gen.choice
-  [ pure Pure
-  , fmap (Wait . Duration) (Gen.integral (Range.linear 1 10000))
-  , Over
-      <$> fmap Duration (Gen.integral (Range.linear 1 10000))
-      <*> Gen.double (Range.linearFrac (-10000) 10000)
-      <*> Gen.double (Range.linearFrac (-10000) 10000)
-  ]
-  [ fmap Alt (Gen.list (Range.linear 0 10) gen_timeliner)
-  , Gen.subterm2 gen_timeliner gen_timeliner Ap
-  ]
+gen_timeliner =
+  Gen.recursive
+    Gen.choice
+    [ pure Pure,
+      fmap (Wait . Duration) (Gen.integral (Range.linear 1 10000)),
+      Over
+        <$> fmap Duration (Gen.integral (Range.linear 1 10000))
+        <*> Gen.double (Range.linearFrac (-10000) 10000)
+        <*> Gen.double (Range.linearFrac (-10000) 10000)
+    ]
+    [ fmap Alt (Gen.list (Range.linear 0 10) gen_timeliner),
+      Gen.subterm2 gen_timeliner gen_timeliner Ap
+    ]
 
 interpret :: Timeliner -> Timeline (Set Double) x
 interpret = \case
-  Alt xs     -> asum (map interpret xs)
-  Ap f x     -> interpret f <*> interpret x
-  Pure       -> mempty
+  Alt xs -> asum (map interpret xs)
+  Ap f x -> interpret f <*> interpret x
+  Pure -> mempty
   Over t m c -> over t \(Progress x) -> Set.singleton (m * x + c)
-  Wait     t -> wait t
+  Wait t -> wait t
 
 (=~=) :: (Monad m, Eq s, Show s) => Timeline s x -> Timeline s x -> PropertyT m ()
 (=~=) x y = do

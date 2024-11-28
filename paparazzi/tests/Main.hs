@@ -16,14 +16,17 @@ main = do
   initializeAll
 
   window <-
-    createWindow "test" defaultWindow
-      { windowGraphicsContext =
-          OpenGLContext defaultOpenGL
-            { glProfile = Core Normal 4 1
-            }
-      , windowInitialSize = V2 800 800
-      , windowVisible = True
-      }
+    createWindow
+      "test"
+      defaultWindow
+        { windowGraphicsContext =
+            OpenGLContext
+              defaultOpenGL
+                { glProfile = Core Normal 4 1
+                },
+          windowInitialSize = V2 800 800,
+          windowVisible = True
+        }
 
   context <- glCreateContext window
   glMakeCurrent window context
@@ -58,11 +61,11 @@ main = do
   arrayBuffer <- GL.genObjectName
   GL.bindBuffer GL.ArrayBuffer $= Just arrayBuffer
 
-  withArray [ 0.0 :: GL.GLfloat, 0.8, -0.8, 0.8, -0.8 ] \pointer -> do
+  withArray [0.0 :: GL.GLfloat, 0.8, -0.8, 0.8, -0.8] \pointer -> do
     GL.bufferData GL.ArrayBuffer $= (12, pointer, GL.StaticDraw)
 
-    GL.vertexAttribPointer position $=
-      (GL.ToFloat, GL.VertexArrayDescriptor 2 GL.Float 0 nullPtr)
+    GL.vertexAttribPointer position
+      $= (GL.ToFloat, GL.VertexArrayDescriptor 2 GL.Float 0 nullPtr)
 
   GL.viewport $= (GL.Position 0 0, GL.Size 800 800)
   GL.currentProgram $= Just program
@@ -85,4 +88,3 @@ main = do
 
   loop 1000
   glDeleteContext context
-

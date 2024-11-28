@@ -28,11 +28,11 @@ gen_cartesian_2d = do
   x <- Gen.double (Range.linearFrac 0 100)
   y <- Gen.double (Range.linearFrac 0 100)
 
-  pure Cartesian{ x, y }
+  pure Cartesian {x, y}
 
 gen_polar :: Gen Polar
 gen_polar = do
   r <- Gen.double (Range.linearFrac 0 100)
   θ <- gen_radians
 
-  pure Polar{ r, θ }
+  pure Polar {r, θ}

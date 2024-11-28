@@ -9,9 +9,9 @@ import Data.Kind (Type)
 import Data.Monoid (Sum (Sum))
 import Data.Via
 import GHC.Generics (Generic)
-import Witch (From (..))
 import Test.Hspec (describe, hspec)
 import Test.Hspec.QuickCheck (prop)
+import Witch (From (..))
 
 type Fahrenheit :: Type
 newtype Fahrenheit = Fahrenheit Double

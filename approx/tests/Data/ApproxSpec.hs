@@ -3,7 +3,7 @@
 module Data.ApproxSpec where
 
 import Data.Approx (Approx (..))
-import Hedgehog ((===), Gen, Property, diff, forAll, property)
+import Hedgehog (Gen, Property, diff, forAll, property, (===))
 import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
 
@@ -22,8 +22,10 @@ law_symmetry xs = property do
   (x ~= y) === (y ~= x)
 
 law_roundtrip :: (Approx x, Floating x, Show x) => Gen x -> Property
-law_roundtrip xs = property $ forAll xs >>= \x ->
-  let y = (x * pi) / pi in diff x (~=) y
+law_roundtrip xs =
+  property $
+    forAll xs >>= \x ->
+      let y = (x * pi) / pi in diff x (~=) y
 
 ---
 

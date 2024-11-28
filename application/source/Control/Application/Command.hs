@@ -5,11 +5,11 @@
 -- Programs that generate events.
 module Control.Application.Command
   ( Command (..),
-
     command,
     effect,
     delay,
-  ) where
+  )
+where
 
 import Control.Concurrent (threadDelay)
 import Control.Concurrent.Async (concurrently_)
@@ -30,7 +30,7 @@ import Witherable (Filterable (..))
 -- 'IO' action runs concurrently, and if further work is required, the
 -- generated event should trigger a further command in the event loop.
 type Command :: Type -> Type
-newtype Command e = Command { execute :: (e -> IO ()) -> IO () }
+newtype Command e = Command {execute :: (e -> IO ()) -> IO ()}
   deriving stock (Functor)
 
 instance Filterable Command where

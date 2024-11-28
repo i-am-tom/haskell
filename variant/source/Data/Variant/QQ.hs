@@ -46,10 +46,9 @@ qq = do
       parse p = either fail pure . parseOnly (p <* endOfInput) . fromString
 
   QuasiQuoter
-    { quoteDec = \_ -> error "No quoteDec defined for evp"
-    , quoteType = \_ -> error "No quoteDec defined for exp"
-
-    , quoteExp = \input -> do
+    { quoteDec = \_ -> error "No quoteDec defined for evp",
+      quoteType = \_ -> error "No quoteDec defined for exp",
+      quoteExp = \input -> do
         (count, expression) <- parse (parser parseExp) input
 
         let here :: Exp
@@ -58,9 +57,8 @@ qq = do
             there :: Exp -> Exp
             there = AppE (ConE (mkName "There"))
 
-        pure (iterate there here !! count)
-
-    , quotePat = \input -> do
+        pure (iterate there here !! count),
+      quotePat = \input -> do
         (count, pat) <- parse (parser parsePat) input
 
         let here :: Pat
@@ -84,4 +82,3 @@ parser constructor = do
   case constructor other of
     Right rest -> pure (index, rest)
     Left message -> fail message
-

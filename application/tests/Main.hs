@@ -19,36 +19,34 @@ data Event = Event Int | Tick
 
 main :: IO ()
 main = do
-  first  <- newEmptyMVar
+  first <- newEmptyMVar
   second <- newEmptyMVar
-  sink   <- newIORef []
+  sink <- newIORef []
 
   let leak :: Event -> Command event
       leak x = effect $ modifyIORef sink \xs -> xs ++ [x]
 
   let example :: Application Event [Event]
-      example = Application
-        { initial = mempty
-
-        , update = \xs x ->
-            if length xs == 10 then
-              Left ExitSuccess
-            else
-              Right (leak x, x : xs)
-
-        , subscriptions = \state ->
-            let mvar :: MVar Event
-                mvar = if even (length state) then first else second
-            in
-              [ makeSubscription \k -> forever (takeMVar mvar >>= k)
-              ]
-        }
+      example =
+        Application
+          { initial = mempty,
+            update = \xs x ->
+              if length xs == 10
+                then
+                  Left ExitSuccess
+                else
+                  Right (leak x, x : xs),
+            subscriptions = \state ->
+              let mvar :: MVar Event
+                  mvar = if even (length state) then first else second
+               in [ makeSubscription \k -> forever (takeMVar mvar >>= k)
+                  ]
+          }
 
   withAsync (run example) \_ -> hspec do
     it "fires commands correctly" do
       putMVar first (Event 1)
       threadDelay 100 -- Concurrency
-
       events <- readIORef sink
       events `shouldBe` [Event 1]
 
@@ -64,4 +62,3 @@ main = do
 
       after <- readIORef sink
       after `shouldBe` [Event 1, Event 2, Event 3]
-

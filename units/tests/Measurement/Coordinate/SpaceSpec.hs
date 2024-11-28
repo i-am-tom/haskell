@@ -47,7 +47,7 @@ gen_cartesian_3d = do
   y <- Gen.double (Range.linearFrac 0 100)
   z <- Gen.double (Range.linearFrac 0 100)
 
-  pure Cartesian { x, y, z }
+  pure Cartesian {x, y, z}
 
 gen_cylindrical :: Gen Cylindrical
 gen_cylindrical = do
@@ -55,7 +55,7 @@ gen_cylindrical = do
   θ <- gen_radians
   z <- Gen.double (Range.linearFrac 0 100)
 
-  pure Cylindrical { r, θ, z }
+  pure Cylindrical {r, θ, z}
 
 gen_spherical :: Gen Spherical
 gen_spherical = do
@@ -63,4 +63,4 @@ gen_spherical = do
   θ <- gen_radians
   φ <- gen_radians
 
-  pure Spherical { ρ, θ, φ }
+  pure Spherical {ρ, θ, φ}
