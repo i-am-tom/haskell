@@ -11,7 +11,8 @@ interface for any type, including awkward ones like functions.
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE StrictData #-}
 module Data.Named
-  ( Named (value),
+  ( Named (key, value)
+  , unsafeMakeName
   ) where
 
 import Data.Function (on)

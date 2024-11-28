@@ -1,0 +1,33 @@
+cabal-version: 3.0
+name: application
+version: 0.1.0.0
+
+library
+  exposed-modules:
+    Control.Application
+    Control.Application.Command
+    Control.Application.Subscription
+  build-depends:
+    , async
+    , base
+    , hashable
+    , managed
+    , managed-async
+    , named
+    , semialign
+    , these
+    , unordered-containers
+    , witherable
+  hs-source-dirs: source
+  default-language: GHC2021
+
+test-suite tests
+  build-depends:
+    , application
+    , async
+    , base
+    , hspec
+  main-is: Main.hs
+  type: exitcode-stdio-1.0
+  hs-source-dirs: tests
+  default-language: GHC2021
