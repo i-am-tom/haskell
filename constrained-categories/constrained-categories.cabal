@@ -1,0 +1,14 @@
+cabal-version: 3.0
+name: constrained-categories
+version: 0.0.0.0
+
+library
+  exposed-modules:
+    Control.Category.Constrained
+    Control.Cartesian.Constrained
+    Control.Closed.Constrained
+    Control.Cocartesian.Constrained
+  build-depends:
+    , base
+  hs-source-dirs: source
+  default-language: GHC2021
