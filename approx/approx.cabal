@@ -14,10 +14,8 @@ test-suite tests
   build-depends:
     , base
     , hedgehog
-    , hspec
     , tasty
     , tasty-hedgehog
-    , tasty-hspec
     , approx
   build-tool-depends:
     tasty-discover:tasty-discover
