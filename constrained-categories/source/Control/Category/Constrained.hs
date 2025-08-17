@@ -23,7 +23,7 @@ import Data.Functor.Contravariant (Op)
 import Data.Kind (Constraint, Type)
 import Data.Type.Coercion (Coercion)
 import Data.Type.Equality ((:~:), (:~~:))
-import Prelude hiding ((.), id)
+import Prelude hiding (id, (.))
 
 -- | A category is a monoidal structure with identity element @id@ for an
 -- associative binary function @.@.
@@ -33,14 +33,15 @@ class (Obj k ~ c) => Category c (k :: t -> t -> Type) | k -> c where
   -- quantified constraints. However, in practice, the constraint is always
   -- determined by the category, so we also have a type family for unquantified
   -- constraints.
-  type family Obj (k :: t -> t -> Type) :: t -> Constraint
+  type Obj (k :: t -> t -> Type) :: t -> Constraint
+
   type Obj k = Trivial
 
   -- | Composition of category arrows.
   (.) :: (c x, c y, c z) => k y z -> k x y -> k x z
 
   -- | Identity on category arrows.
-  id :: c x => k x x
+  id :: (c x) => k x x
 
 -- | Because the constraint is determined by the functional dependency, we can
 -- use this synonym in constraints to save us a type variable.
@@ -50,6 +51,7 @@ type Category' k = Category (Obj k) k
 -- | A trivial constraint satisfied by all objects.
 type Trivial :: t -> Constraint
 class Trivial x
+
 instance Trivial x
 
 -- | A newtype via which we can derive instances for unconstrained categories.
@@ -58,30 +60,42 @@ instance Trivial x
 type Base :: (t -> t -> Type) -> t -> t -> Type
 newtype Base k a b = Base (k a b)
 
-instance Base.Category k => Category Trivial (Base k) where
+instance (Base.Category k) => Category Trivial (Base k) where
   (.) :: Base k y z -> Base k x y -> Base k x z
   Base f . Base g = Base (f Base.. g)
 
   id :: Base k x x
   id = Base Base.id
 
-deriving via Base (->)
-  instance Category Trivial (->)
+deriving via
+  Base (->)
+  instance
+    Category Trivial (->)
 
-deriving via Base Op
-  instance Category Trivial Op
+deriving via
+  Base Op
+  instance
+    Category Trivial Op
 
-deriving via Base (Kleisli m)
-  instance Monad m => Category Trivial (Kleisli m)
+deriving via
+  Base (Kleisli m)
+  instance
+    (Monad m) => Category Trivial (Kleisli m)
 
-deriving via Base Coercion
-  instance Category Trivial Coercion
+deriving via
+  Base Coercion
+  instance
+    Category Trivial Coercion
 
-deriving via Base (:~:)
-  instance Category Trivial (:~:)
+deriving via
+  Base (:~:)
+  instance
+    Category Trivial (:~:)
 
-deriving via Base (:~~:)
-  instance Category Trivial (:~~:)
+deriving via
+  Base (:~~:)
+  instance
+    Category Trivial (:~~:)
 
 -- | A type for natural transformations.
 type (~>) :: (Type -> Type) -> (Type -> Type) -> Type
@@ -98,7 +112,7 @@ instance Category Functor (~>) where
 
 -- | Endomorphisms in a category @k@ form a 'Monoid'.
 type Endo :: (t -> t -> Type) -> t -> Type
-newtype Endo k a = Endo { unEndo :: k a a }
+newtype Endo k a = Endo {unEndo :: k a a}
 
 instance (Category' k, Obj k a) => Semigroup (Endo k a) where
   Endo f <> Endo g = Endo (g . f)

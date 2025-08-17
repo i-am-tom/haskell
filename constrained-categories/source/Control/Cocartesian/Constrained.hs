@@ -14,15 +14,18 @@ import Control.Category.Constrained
 import Data.Functor.Contravariant (Op (..))
 import Data.Kind (Constraint, Type)
 import GHC.Generics ((:+:) (..))
-import Prelude hiding ((.), id)
+import Prelude hiding (id, (.))
 
 -- | A cocartesian category is a category that includes sum types along with
 -- constructors and destructors.
 type Cocartesian :: forall t. (t -> Constraint) -> (t -> t -> t) -> (t -> t -> Type) -> Constraint
-class (forall x y. (c x, c y) => c (s x y), Category c k, Sum k ~ s)
-    => Cocartesian c s (k :: t -> t -> Type) | k -> c s where
+class
+  (forall x y. (c x, c y) => c (s x y), Category c k, Sum k ~ s) =>
+  Cocartesian c s (k :: t -> t -> Type)
+    | k -> c s
+  where
   -- | The type of sums within this category.
-  type family Sum (k :: t -> t -> Type) :: t -> t -> t
+  type Sum (k :: t -> t -> Type) :: t -> t -> t
 
   -- | Sum destructor.
   (▽) :: (c x, c y, c z) => k x z -> k y z -> k (Sum k x y) z
@@ -83,7 +86,7 @@ instance Cocartesian Trivial (,) Op where
   inr :: Op y (x, y)
   inr = Op \(_, y) -> y
 
-instance Monad m => Cocartesian Trivial Either (Kleisli m) where
+instance (Monad m) => Cocartesian Trivial Either (Kleisli m) where
   type Sum (Kleisli m) = Either
 
   (▽) :: Kleisli m x z -> Kleisli m y z -> Kleisli m (Either x y) z

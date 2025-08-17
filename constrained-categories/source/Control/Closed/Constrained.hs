@@ -12,14 +12,17 @@ import Control.Cartesian.Constrained (Cartesian (..))
 import Control.Category.Constrained
 import Data.Kind (Constraint, Type)
 import GHC.Generics ((:*:) (..))
-import Prelude hiding ((.), id, uncurry)
-import qualified Prelude
+import Prelude hiding (id, uncurry, (.))
+import Prelude qualified
 
 -- | A closed cartesian category is a category that includes morphisms as
 -- objects.
 type Closed :: forall t. (t -> Constraint) -> (t -> t -> t) -> (t -> t -> Type) -> Constraint
-class (forall x y. (c x, c y) => c (h x y), Cartesian c (Product k) k, Hom k ~ h)
-    => Closed c h (k :: t -> t -> Type) | k -> c h where
+class
+  (forall x y. (c x, c y) => c (h x y), Cartesian c (Product k) k, Hom k ~ h) =>
+  Closed c h (k :: t -> t -> Type)
+    | k -> c h
+  where
   -- | The type of morphisms within this category.
   type Hom (k :: t -> t -> Type) :: t -> t -> t
 
@@ -49,7 +52,7 @@ instance Closed Trivial (->) (->) where
   uncurry :: (x -> y -> z) -> ((x, y) -> z)
   uncurry = Prelude.uncurry
 
-instance Monad m => Closed Trivial (Kleisli m) (Kleisli m) where
+instance (Monad m) => Closed Trivial (Kleisli m) (Kleisli m) where
   type Hom (Kleisli m) = Kleisli m
 
   curry :: Kleisli m (x, y) z -> Kleisli m x (Kleisli m y z)
@@ -62,12 +65,12 @@ instance Monad m => Closed Trivial (Kleisli m) (Kleisli m) where
 -- products with the following type.
 type End :: (Type -> Type) -> (Type -> Type) -> (Type -> Type)
 newtype End f g x = End (forall e. (x -> e) -> f e -> g e)
-  deriving stock Functor
+  deriving stock (Functor)
 
 instance Closed Functor End (~>) where
   type Hom (~>) = End
 
-  curry :: Functor x => ((x :*: y) ~> z) -> (x ~> End y z)
+  curry :: (Functor x) => ((x :*: y) ~> z) -> (x ~> End y z)
   curry (NT f) = NT \x -> End \g y -> f (fmap g x :*: y)
 
   uncurry :: (x ~> End y z) -> ((x :*: y) ~> z)
