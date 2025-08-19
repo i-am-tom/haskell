@@ -1,0 +1,34 @@
+cabal-version: 3.0
+name: constrained-categories
+version: 0.0.0.0
+
+library
+  exposed-modules:
+    Control.Category.Constrained
+    Control.Cartesian.Constrained
+    Control.Closed.Constrained
+    Control.Cocartesian.Constrained
+  build-depends:
+    , base
+  hs-source-dirs: source
+  default-language: GHC2021
+
+test-suite tests
+  build-depends:
+    , base
+    , hedgehog
+    , mtl
+    , tasty
+    , tasty-hedgehog
+    , constrained-categories
+  build-tool-depends:
+    tasty-discover:tasty-discover
+  main-is: Driver.hs
+  other-modules:
+    Test.CartesianSpec
+    Test.CategorySpec
+    Test.ClosedSpec
+    Test.CocartesianSpec
+  type: exitcode-stdio-1.0
+  hs-source-dirs: tests
+  default-language: GHC2021
