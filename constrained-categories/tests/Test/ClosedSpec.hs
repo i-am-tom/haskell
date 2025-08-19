@@ -70,7 +70,7 @@ hprop_nt_extensionality = law_extensionality verify prepare gen_int
       x <- forAll (Gen.maybe gen_int)
       y <- forAll (Gen.maybe gen_int)
 
-      unEnd (f x) id x === unEnd (g x) id y
+      unEnd (f x) id y === unEnd (g x) id y
 
     prepare :: Int -> (Maybe ~> End Maybe Maybe)
     prepare n = NT \x -> End \f y ->
