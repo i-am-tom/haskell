@@ -12,3 +12,22 @@ library
     , base
   hs-source-dirs: source
   default-language: GHC2021
+
+test-suite tests
+  build-depends:
+    , base
+    , hedgehog
+    , mtl
+    , tasty
+    , tasty-hedgehog
+    , constrained-categories
+  build-tool-depends:
+    tasty-discover:tasty-discover
+  main-is: Driver.hs
+  other-modules:
+    Test.CategorySpec
+    Test.CartesianSpec
+    Test.CocartesianSpec
+  type: exitcode-stdio-1.0
+  hs-source-dirs: tests
+  default-language: GHC2021

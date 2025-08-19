@@ -6,7 +6,6 @@
 -- | A cartesian category with constraints upon its objects.
 module Control.Cartesian.Constrained where
 
-import Control.Arrow (Kleisli (..))
 import Control.Category.Constrained
 import Data.Functor.Contravariant (Op (..))
 import Data.Kind (Constraint, Type)
@@ -82,18 +81,6 @@ instance Cartesian Trivial Either Op where
 
   exr :: Op (Either x y) y
   exr = Op Right
-
-instance (Monad m) => Cartesian Trivial (,) (Kleisli m) where
-  type Product (Kleisli m) = (,)
-
-  (△) :: Kleisli m x y -> Kleisli m x z -> Kleisli m x (y, z)
-  Kleisli f △ Kleisli g = Kleisli \x -> liftA2 (,) (f x) (g x)
-
-  exl :: Kleisli m (x, y) x
-  exl = Kleisli \(x, _) -> pure x
-
-  exr :: Kleisli m (x, y) y
-  exr = Kleisli \(_, y) -> pure y
 
 instance Cartesian Functor (:*:) (~>) where
   type Product (~>) = (:*:)

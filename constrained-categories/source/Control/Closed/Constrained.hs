@@ -7,7 +7,6 @@
 -- | A closed category with constraints upon its objects.
 module Control.Closed.Constrained where
 
-import Control.Arrow (Kleisli (..))
 import Control.Cartesian.Constrained (Cartesian (..))
 import Control.Category.Constrained
 import Data.Kind (Constraint, Type)
@@ -52,19 +51,10 @@ instance Closed Trivial (->) (->) where
   uncurry :: (x -> y -> z) -> ((x, y) -> z)
   uncurry = Prelude.uncurry
 
-instance (Monad m) => Closed Trivial (Kleisli m) (Kleisli m) where
-  type Hom (Kleisli m) = Kleisli m
-
-  curry :: Kleisli m (x, y) z -> Kleisli m x (Kleisli m y z)
-  curry (Kleisli f) = Kleisli \x -> pure (Kleisli \y -> f (x, y))
-
-  uncurry :: Kleisli m x (Kleisli m y z) -> Kleisli m (x, y) z
-  uncurry (Kleisli f) = Kleisli \(x, y) -> f x >>= \(Kleisli g) -> g y
-
 -- | Natural transformations form a closed category, where we can represent the
 -- products with the following type.
 type End :: (Type -> Type) -> (Type -> Type) -> (Type -> Type)
-newtype End f g x = End (forall e. (x -> e) -> f e -> g e)
+newtype End f g x = End {unEnd :: forall e. (x -> e) -> f e -> g e}
   deriving stock (Functor)
 
 instance Closed Functor End (~>) where
