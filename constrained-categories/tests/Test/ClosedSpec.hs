@@ -4,13 +4,14 @@
 {-# LANGUAGE ViewPatterns #-}
 
 module Test.ClosedSpec where
+
 import Control.Category.Constrained (Category (..), type (~>) (..))
-import Control.Closed.Constrained (curry, uncurry, End (..))
+import Control.Closed.Constrained (End (..), curry, uncurry)
 import Data.Functor.Const (Const (..))
 import GHC.Generics ((:*:) (..))
-import Prelude hiding ((.), curry, id, uncurry)
 import Test.Orphans ()
 import Test.QuickCheck (Fun (..))
+import Prelude hiding (curry, id, uncurry, (.))
 
 function :: Fun x y -> (x -> y)
 function (Fun _ f) = f

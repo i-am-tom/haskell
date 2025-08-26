@@ -9,8 +9,8 @@ import Data.Functor.Const (Const (..))
 import Data.Functor.Contravariant (Op (..))
 import GHC.Generics ((:*:) (..))
 import Test.Orphans ()
-import Prelude hiding (id, (.))
 import Test.QuickCheck (Fun (..))
+import Prelude hiding (id, (.))
 
 function :: Fun x y -> (x -> y)
 function (Fun _ f) = f

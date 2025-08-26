@@ -6,18 +6,18 @@ module Test.CategorySpec where
 
 import Control.Arrow (Kleisli (..))
 import Control.Category.Constrained
-import Data.Functor.Contravariant (Op (..))
 import Data.Functor.Const (Const (..))
-import Prelude hiding (id, (.))
+import Data.Functor.Contravariant (Op (..))
 import Test.Orphans ()
 import Test.QuickCheck (Fun (..))
+import Prelude hiding (id, (.))
 
 function :: Fun x y -> (x -> y)
 function (Fun _ f) = f
 
 prop_function_associativity :: Fun Int Bool -> Fun String Int -> Fun Double String -> Double -> Bool
-prop_function_associativity (function -> f) (function -> g) (function -> h) x
-  = ((f . g) . h) x == (f . (g . h)) x
+prop_function_associativity (function -> f) (function -> g) (function -> h) x =
+  ((f . g) . h) x == (f . (g . h)) x
 
 prop_function_left_identity :: Fun Int Bool -> Int -> Bool
 prop_function_left_identity (function -> f) x = (id . f) x == f x
@@ -45,8 +45,8 @@ kleisli :: Fun x (Maybe y) -> Kleisli Maybe x y
 kleisli (Fun _ f) = Kleisli f
 
 prop_kleisli_associativity :: Fun Int (Maybe String) -> Fun String (Maybe Int) -> Fun Double (Maybe String) -> Double -> Bool
-prop_kleisli_associativity (kleisli -> f) (kleisli -> g) (kleisli -> h) x
-  = runKleisli ((f . g) . h) x == runKleisli (f . (g . h)) x
+prop_kleisli_associativity (kleisli -> f) (kleisli -> g) (kleisli -> h) x =
+  runKleisli ((f . g) . h) x == runKleisli (f . (g . h)) x
 
 prop_kleisli_left_identity :: Fun Int (Maybe String) -> Int -> Bool
 prop_kleisli_left_identity (kleisli -> f) x = runKleisli (id . f) x == runKleisli (f) x
@@ -60,8 +60,8 @@ nt :: (Fun x y) -> (Const x ~> Const y)
 nt (Fun _ f) = NT \(Const x) -> Const (f x)
 
 prop_nt_associativity :: (Fun Int String) -> (Fun String Int) -> (Fun Double String) -> Double -> Bool
-prop_nt_associativity (nt -> f) (nt -> g) (nt -> h) x
-  = runNT ((f . g) . h) (Const x) == runNT (f . (g . h)) (Const x)
+prop_nt_associativity (nt -> f) (nt -> g) (nt -> h) x =
+  runNT ((f . g) . h) (Const x) == runNT (f . (g . h)) (Const x)
 
 prop_nt_left_identity :: (Fun Int String) -> Int -> Bool
 prop_nt_left_identity (nt -> f) x = runNT (id . f) (Const x) == runNT (f) (Const x)
