@@ -1,106 +1,56 @@
 {-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE ViewPatterns #-}
 
 module Test.CartesianSpec where
 
 import Control.Cartesian.Constrained
 import Control.Category.Constrained
-import Control.Cocartesian.Constrained (flatten)
-import Control.Monad.State (State, modify, runState)
+import Data.Functor.Const (Const (..))
 import Data.Functor.Contravariant (Op (..))
 import GHC.Generics ((:*:) (..))
-import Hedgehog
-import Hedgehog.Gen qualified as Gen
-import Test.CategorySpec (gen_int, prepare_op)
+import Test.Orphans ()
 import Prelude hiding (id, (.))
+import Test.QuickCheck (Fun (..))
 
-law_left_projection ::
-  (Cartesian c p k, c x, c y, Show i) =>
-  (k x y -> k x y -> PropertyT IO ()) ->
-  (i -> k x y) ->
-  Gen i ->
-  Property
-law_left_projection (=~=) prepare gen = property do
-  f <- fmap prepare (forAll gen)
-  g <- fmap prepare (forAll gen)
+function :: Fun x y -> (x -> y)
+function (Fun _ f) = f
 
-  (exl . (f △ g)) =~= f
+prop_function_left_projection :: Fun Int String -> Fun Int Bool -> Int -> Bool
+prop_function_left_projection (function -> f) (function -> g) x = (exl . (f △ g)) x == f x
 
-law_right_projection ::
-  (Cartesian c p k, c x, c y, Show i) =>
-  (k x y -> k x y -> PropertyT IO ()) ->
-  (i -> k x y) ->
-  Gen i ->
-  Property
-law_right_projection (=~=) prepare gen = property do
-  f <- fmap prepare (forAll gen)
-  g <- fmap prepare (forAll gen)
+prop_function_right_projection :: Fun Int String -> Fun Int Bool -> Int -> Bool
+prop_function_right_projection (function -> f) (function -> g) x = (exr . (f △ g)) x == g x
 
-  (exr . (f △ g)) =~= g
-
-law_uniqueness ::
-  (Cartesian c p k, c x, c y, Show i) =>
-  (k x (p y y) -> k x (p y y) -> PropertyT IO ()) ->
-  (i -> k x y) ->
-  Gen i ->
-  Property
-law_uniqueness (=~=) prepare gen = property do
-  f <- fmap prepare (forAll gen)
-  g <- fmap prepare (forAll gen)
-
-  let h = f △ g
-  ((exl . h) △ (exr . h)) =~= h
+prop_function_uniqueness :: Fun Int (String, Bool) -> Int -> Bool
+prop_function_uniqueness (function -> f) x = ((exl △ exr) . f) x == f x
 
 ---
 
-verify_function :: (Int -> (Int, Int)) -> (Int -> (Int, Int)) -> PropertyT IO ()
-verify_function f g = forAll gen_int >>= \x -> f x === g x
+op :: Fun x y -> Op y x
+op (Fun _ f) = Op f
 
-prepare_function :: Int -> Int -> (Int, Int)
-prepare_function x y = (x + y, x - y)
+prop_op_left_projection :: Fun String Int -> Fun Bool Int -> String -> Bool
+prop_op_left_projection (op -> f) (op -> g) x = getOp (exl . (f △ g)) x == getOp f x
 
-hprop_function_left_projection :: Property
-hprop_function_left_projection = law_left_projection verify_function prepare_function gen_int
+prop_op_right_projection :: Fun String Int -> Fun Bool Int -> Bool -> Bool
+prop_op_right_projection (op -> f) (op -> g) x = getOp (exr . (f △ g)) x == getOp g x
 
-hprop_function_right_projection :: Property
-hprop_function_right_projection = law_right_projection verify_function prepare_function gen_int
-
-hprop_function_uniqueness :: Property
-hprop_function_uniqueness = law_uniqueness verify_function (+) gen_int
+prop_op_uniqueness :: Fun (Either Int Int) String -> Either Int Int -> Bool
+prop_op_uniqueness (op -> f) x = getOp ((exl △ exr) . f) x == getOp f x
 
 ---
 
-verify_op :: Op Int (Either Int Int) -> Op Int (Either Int Int) -> PropertyT IO ()
-verify_op (Op f) (Op g) = forAll (Gen.either gen_int gen_int) >>= \x -> f x === g x
+nt :: (Fun x y) -> (Const x ~> Const y)
+nt (Fun _ f) = NT \(Const x) -> Const (f x)
 
-prepare_op' :: Int -> Op Int (Either Int Int)
-prepare_op' x = Op \y -> x + flatten y
+prop_nt_left_projection :: Fun Int String -> Fun Int Bool -> Const Int Int -> Bool
+prop_nt_left_projection (nt -> f) (nt -> g) x = runNT (exl . (f △ g)) x == runNT f x
 
-hprop_op_left_projection :: Property
-hprop_op_left_projection = law_left_projection verify_op prepare_op' gen_int
+prop_nt_right_projection :: Fun Int String -> Fun Int Bool -> Const Int Int -> Bool
+prop_nt_right_projection (nt -> f) (nt -> g) x = runNT (exr . (f △ g)) x == runNT g x
 
-hprop_op_right_projection :: Property
-hprop_op_right_projection = law_right_projection verify_op prepare_op' gen_int
-
-hprop_op_uniqueness :: Property
-hprop_op_uniqueness = law_uniqueness verify_op prepare_op gen_int
-
----
-
-verify_nt :: (State Int ~> (State Int :*: State Int)) -> (State Int ~> (State Int :*: State Int)) -> PropertyT IO ()
-verify_nt (NT f) (NT g) = go (f (pure "hi")) === go (g (pure "hi"))
+prop_nt_uniqueness :: Fun Int (String, Bool) -> Int -> Bool
+prop_nt_uniqueness f (Const -> x) = runNT ((exl △ exr) . (nt' f)) x == runNT (nt' f) x
   where
-    go (x :*: y) = (runState x 0, runState y 0)
-
-prepare_nt :: Int -> (State Int ~> (State Int :*: State Int))
-prepare_nt x = NT \s -> (go x s :*: go (-x) s)
-  where
-    go d s = s <* modify (+ d)
-
-hprop_nt_left_projection :: Property
-hprop_nt_left_projection = law_left_projection verify_nt prepare_nt gen_int
-
-hprop_nt_right_projection :: Property
-hprop_nt_right_projection = law_left_projection verify_nt prepare_nt gen_int
-
-hprop_nt_uniqueness :: Property
-hprop_nt_uniqueness = law_left_projection verify_nt prepare_nt gen_int
+    nt' :: Fun Int (String, Bool) -> Const Int ~> (Const String :*: Const Bool)
+    nt' (Fun _ g) = NT \(Const i) -> let (s, b) = g i in Const s :*: Const b
