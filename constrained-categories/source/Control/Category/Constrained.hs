@@ -99,7 +99,7 @@ deriving via
 
 -- | A type for natural transformations.
 type (~>) :: (Type -> Type) -> (Type -> Type) -> Type
-newtype f ~> g = NT (forall x. f x -> g x)
+newtype f ~> g = NT {runNT :: forall x. f x -> g x}
 
 instance Category Functor (~>) where
   type Obj (~>) = Functor

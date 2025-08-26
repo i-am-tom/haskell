@@ -1,79 +1,37 @@
 {-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE ExplicitNamespaces #-}
 {-# LANGUAGE ImportQualifiedPost #-}
+{-# LANGUAGE ViewPatterns #-}
 
 module Test.ClosedSpec where
 
-import Control.Applicative ((<|>))
-import Control.Cartesian.Constrained
-import Control.Category.Constrained
-import Control.Closed.Constrained
+import Control.Category.Constrained (Category (..), type (~>) (..))
+import Control.Closed.Constrained (End (..), curry, uncurry)
+import Data.Functor.Const (Const (..))
 import GHC.Generics ((:*:) (..))
-import Hedgehog
-import Hedgehog.Gen qualified as Gen
-import Test.CategorySpec (gen_int)
+import Test.Orphans ()
+import Test.QuickCheck (Fun (..))
 import Prelude hiding (curry, id, uncurry, (.))
 
-law_evaluation :: (Closed c h k, c x, c y, c z, Show i) => (k (Product k x y) z -> k (Product k x y) z -> PropertyT IO ()) -> (i -> k (Product k x y) z) -> Gen i -> Property
-law_evaluation (=~=) prepare gen = property do
-  f <- fmap prepare (forAll gen)
-  uncurry (curry f) =~= f
+function :: Fun x y -> (x -> y)
+function (Fun _ f) = f
 
-law_extensionality :: (Closed c h k, c x, c y, c z, Show i) => (k x (h y z) -> k x (h y z) -> PropertyT IO ()) -> (i -> k x (h y z)) -> Gen i -> Property
-law_extensionality (=~=) prepare gen = property do
-  f <- fmap prepare (forAll gen)
-  curry (uncurry f) =~= f
+prop_function_evaluation :: Fun (Int, String) Bool -> (Int, String) -> Bool
+prop_function_evaluation (function -> f) x = uncurry (curry f) x == f x
 
----
-
-hprop_function_evaluation :: Property
-hprop_function_evaluation = law_evaluation verify prepare gen_int
-  where
-    verify :: ((Int, Int) -> (Int, Int)) -> ((Int, Int) -> (Int, Int)) -> PropertyT IO ()
-    verify f g = forAll (liftA2 (,) gen_int gen_int) >>= \x -> f x === g x
-
-    prepare :: Int -> (Int, Int) -> (Int, Int)
-    prepare x (y, z) = (x + y, x + z)
-
-hprop_function_extensionality :: Property
-hprop_function_extensionality = law_extensionality verify prepare gen_int
-  where
-    prepare :: Int -> Int -> Int -> Int
-    prepare x y z = x + y + z
-
-    verify :: (Int -> Int -> Int) -> (Int -> Int -> Int) -> PropertyT IO ()
-    verify f g = do
-      x <- forAll gen_int
-      y <- forAll gen_int
-
-      f x y === g x y
+prop_function_extensionality :: Fun Int (Fun String Bool) -> (Int, String) -> Bool
+prop_function_extensionality (fmap function . function -> f) (x, y) = curry (uncurry f) x y == f x y
 
 ---
 
-hprop_nt_evaluation :: Property
-hprop_nt_evaluation = law_evaluation verify prepare gen_int
+prop_nt_evaluation :: (Fun (Int, String) Bool) -> (Const Int :*: Const String) Int -> Bool
+prop_nt_evaluation f x = runNT (uncurry (curry (nt f))) x == runNT (nt f) x
   where
-    verify :: ((Maybe :*: Maybe) ~> (Maybe :*: Maybe)) -> ((Maybe :*: Maybe) ~> (Maybe :*: Maybe)) -> PropertyT IO ()
-    verify (NT f) (NT g) = do
-      x <- forAll (Gen.maybe gen_int)
-      y <- forAll (Gen.maybe gen_int)
+    nt :: (Fun (x, y) z) -> ((Const x :*: Const y) ~> Const z)
+    nt (Fun _ g) = NT \(Const a :*: Const b) -> Const (g (a, b))
 
-      f (x :*: y) === g (x :*: y)
-
-    prepare :: Int -> (Maybe :*: Maybe) ~> (Maybe :*: Maybe)
-    prepare n = NT \(x :*: y) -> if n `mod` 2 == 0 then x :*: y else y :*: x
-
-hprop_nt_extensionality :: Property
-hprop_nt_extensionality = law_extensionality verify prepare gen_int
+prop_nt_extensionality :: (Fun Int (Fun String Bool)) -> (Const Int :*: Const String) Int -> Bool
+prop_nt_extensionality f (x :*: y) = unEnd (runNT (curry (uncurry (nt f))) x) id y == unEnd (runNT (nt f) x) id y
   where
-    verify :: (Maybe ~> End Maybe Maybe) -> (Maybe ~> End Maybe Maybe) -> PropertyT IO ()
-    verify (NT f) (NT g) = do
-      x <- forAll (Gen.maybe gen_int)
-      y <- forAll (Gen.maybe gen_int)
-
-      unEnd (f x) id y === unEnd (g x) id y
-
-    prepare :: Int -> (Maybe ~> End Maybe Maybe)
-    prepare n = NT \x -> End \f y ->
-      if n `mod` 2 == 0
-        then fmap f x <|> y
-        else y <|> fmap f x
+    nt :: (Fun Int (Fun String Bool)) -> (Const Int ~> End (Const String) (Const Bool))
+    nt (Fun _ g) = NT \(Const i) -> End \_ (Const s) -> let Fun _ h = g i in Const (h s)

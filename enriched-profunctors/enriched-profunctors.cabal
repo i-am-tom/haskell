@@ -1,34 +1,36 @@
 cabal-version: 3.0
-name: constrained-categories
+name: enriched-profunctors
 version: 0.0.0.0
 
 library
   exposed-modules:
-    Control.Category.Constrained
-    Control.Cartesian.Constrained
-    Control.Closed.Constrained
-    Control.Cocartesian.Constrained
+    Data.Profunctor.Enriched
+    Data.Profunctor.Strong.Enriched
+    Data.Profunctor.Choice.Enriched
+    Data.Profunctor.Closed.Enriched
   build-depends:
     , base
+    , constrained-categories
   hs-source-dirs: source
   default-language: GHC2021
 
 test-suite tests
   build-depends:
     , base
+    , constrained-categories
     , QuickCheck
     , tasty
     , tasty-quickcheck
-    , constrained-categories
+    , enriched-profunctors
   build-tool-depends:
     tasty-discover:tasty-discover
   main-is: Driver.hs
   other-modules:
-    Test.CartesianSpec
-    Test.CategorySpec
+    Test.ChoiceSpec
     Test.ClosedSpec
-    Test.CocartesianSpec
     Test.Orphans
+    Test.ProfunctorSpec
+    Test.StrongSpec
   type: exitcode-stdio-1.0
   hs-source-dirs: tests
   default-language: GHC2021
