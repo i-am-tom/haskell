@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - run: sudo apt-get update
+
     - run: sudo apt-get install -y libpcre3-dev
 
     - uses: actions/checkout@v3
