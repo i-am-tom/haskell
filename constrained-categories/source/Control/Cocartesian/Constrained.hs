@@ -10,7 +10,8 @@
 module Control.Cocartesian.Constrained where
 
 import Control.Arrow (Kleisli (..))
-import Control.Category.Constrained
+import Control.Category.Constrained (Category (..), Trivial, type (~>) (..))
+import Data.Constraint.Proof (Preserves2)
 import Data.Functor.Contravariant (Op (..))
 import Data.Kind (Constraint, Type)
 import GHC.Generics ((:+:) (..))
@@ -19,11 +20,7 @@ import Prelude hiding (id, (.))
 -- | A cocartesian category is a category that includes sum types along with
 -- constructors and destructors.
 type Cocartesian :: forall t. (t -> Constraint) -> (t -> t -> t) -> (t -> t -> Type) -> Constraint
-class
-  (forall x y. (c x, c y) => c (s x y), Category c k, Sum k ~ s) =>
-  Cocartesian c s (k :: t -> t -> Type)
-    | k -> c s
-  where
+class (Preserves2 s c, Category c k, Sum k ~ s) => Cocartesian c s (k :: t -> t -> Type) | k -> c s where
   -- | The type of sums within this category.
   type Sum (k :: t -> t -> Type) :: t -> t -> t
 

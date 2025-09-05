@@ -7,8 +7,9 @@
 -- | A closed category with constraints upon its objects.
 module Control.Closed.Constrained where
 
-import Control.Cartesian.Constrained (Cartesian (..))
-import Control.Category.Constrained
+import Control.Cartesian.Constrained (Cartesian (..), Cartesian')
+import Control.Category.Constrained (Category (..), Trivial, type (~>) (..))
+import Data.Constraint.Proof (Preserves2)
 import Data.Kind (Constraint, Type)
 import GHC.Generics ((:*:) (..))
 import Prelude hiding (id, uncurry, (.))
@@ -17,11 +18,7 @@ import Prelude qualified
 -- | A closed cartesian category is a category that includes morphisms as
 -- objects.
 type Closed :: forall t. (t -> Constraint) -> (t -> t -> t) -> (t -> t -> Type) -> Constraint
-class
-  (forall x y. (c x, c y) => c (h x y), Cartesian c (Product k) k, Hom k ~ h) =>
-  Closed c h (k :: t -> t -> Type)
-    | k -> c h
-  where
+class (Preserves2 h c, Cartesian' k, Hom k ~ h) => Closed c h (k :: t -> t -> Type) | k -> c h where
   -- | The type of morphisms within this category.
   type Hom (k :: t -> t -> Type) :: t -> t -> t
 

@@ -7,12 +7,12 @@ module Data.Profunctor.Strong.Enriched where
 
 import Control.Arrow (Kleisli (..))
 import Control.Cartesian.Constrained (Cartesian (..), Cartesian', Product, dup, swap)
-import Control.Category.Constrained (Obj, type (~>) (..))
+import Control.Category.Constrained (type (~>) (..))
 import Data.Bifunctor (first, second)
 import Data.Bitraversable (bitraverse)
 import Data.Functor.Contravariant (Op (..))
 import Data.Kind (Constraint, Type)
-import Data.Profunctor.Enriched (Profunctor (..))
+import Data.Profunctor.Enriched (Obj, Profunctor (..))
 import GHC.Generics ((:*:) (..))
 
 -- | An extension of the typical definition of a strong profunctor to allow for
@@ -20,16 +20,16 @@ import GHC.Generics ((:*:) (..))
 type Strong :: forall t. (t -> t -> Type) -> (t -> t -> Type) -> Constraint
 class (Profunctor k p, Cartesian' k) => Strong k p | p -> k where
   -- | Lift a mapping over the left side of a product.
-  first' :: (Obj k x, Obj k y, Obj k z) => p x y -> p (Product k x z) (Product k y z)
+  first' :: (Obj p x, Obj p y, Obj p z) => p x y -> p (Product k x z) (Product k y z)
   first' = dimap swap swap . second'
 
   -- | Lift a mapping over the right side of a product.
-  second' :: (Obj k x, Obj k y, Obj k z) => p x y -> p (Product k z x) (Product k z y)
+  second' :: (Obj p x, Obj p y, Obj p z) => p x y -> p (Product k z x) (Product k z y)
   second' = dimap swap swap . first'
 
   {-# MINIMAL first' | second' #-}
 
-strong :: (Strong k p, Obj k x, Obj k y, Obj k z) => k (Product k x y) z -> p x y -> p x z
+strong :: (Strong k p, Obj p x, Obj p y, Obj p z) => k (Product k x y) z -> p x y -> p x z
 strong k = dimap dup k . second'
 
 -- | Because the category is determined by functional dependency, we can use

@@ -10,6 +10,7 @@ library
     Control.Cocartesian.Constrained
   build-depends:
     , base
+    , constrained
   hs-source-dirs: source
   default-language: GHC2021
 
