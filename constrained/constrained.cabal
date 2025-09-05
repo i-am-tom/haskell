@@ -1,0 +1,13 @@
+cabal-version: 3.0
+name: constrained
+version: 0.0.0.0
+
+library
+  exposed-modules:
+    Data.Constraint.Generic
+    Data.Constraint.Helpers
+    Data.Constraint.Proof
+  build-depends:
+    , base
+  hs-source-dirs: source
+  default-language: GHC2021
