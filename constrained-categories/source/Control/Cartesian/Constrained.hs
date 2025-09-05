@@ -6,7 +6,8 @@
 -- | A cartesian category with constraints upon its objects.
 module Control.Cartesian.Constrained where
 
-import Control.Category.Constrained
+import Control.Category.Constrained (Category (..), Trivial, type (~>) (..))
+import Data.Constraint.Proof (Preserves2)
 import Data.Functor.Contravariant (Op (..))
 import Data.Kind (Constraint, Type)
 import GHC.Generics ((:*:) (..))
@@ -15,22 +16,18 @@ import Prelude hiding (id, (.))
 -- | A cartesian category is a "Category" that includes product types along
 -- with constructors and destructors.
 type Cartesian :: forall t. (t -> Constraint) -> (t -> t -> t) -> (t -> t -> Type) -> Constraint
-class
-  (forall x y. (c x, c y) => c (p x y), Category c k, Product k ~ p) =>
-  Cartesian c p (k :: t -> t -> Type)
-    | k -> c p
-  where
+class (Preserves2 p c, Category c k, Product k ~ p) => Cartesian c p (k :: t -> t -> Type) | k -> c p where
   -- | The type of products within this category.
   type Product k :: t -> t -> t
 
   -- | Product constructor.
-  (△) :: (c x, c y, c z) => k x y -> k x z -> k x (Product k y z)
+  (△) :: (c x, c y, c z) => k x y -> k x z -> k x (y `p` z)
 
   -- | Product left destructor.
-  exl :: (c x, c y) => k (Product k x y) x
+  exl :: (c x, c y) => k (x `p` y) x
 
   -- | Product right destructor.
-  exr :: (c x, c y) => k (Product k x y) y
+  exr :: (c x, c y) => k (x `p` y) y
 
 -- | Apply an arrow to each side of a cartesian product type.
 (***) :: (Cartesian c p k, c x, c y, c z, c w) => k x y -> k z w -> k (x `p` z) (y `p` w)

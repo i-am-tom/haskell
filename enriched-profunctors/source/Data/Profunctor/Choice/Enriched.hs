@@ -8,12 +8,12 @@ module Data.Profunctor.Choice.Enriched where
 
 import Control.Arrow (Kleisli (..))
 import Control.Category.Constrained (type (~>) (..))
-import Control.Cocartesian.Constrained (Cocartesian (..), Cocartesian')
+import Control.Cocartesian.Constrained (Cocartesian (..), Cocartesian', swap)
 import Data.Bifunctor (first, second)
 import Data.Bitraversable (bitraverse)
 import Data.Functor.Contravariant (Op (..))
 import Data.Kind (Constraint, Type)
-import Data.Profunctor.Enriched (Profunctor (..))
+import Data.Profunctor.Enriched (Obj, Profunctor (..))
 import GHC.Generics ((:+:) (..))
 
 -- | An extension of the typical definition of a choice profunctor to allow for
@@ -21,10 +21,14 @@ import GHC.Generics ((:+:) (..))
 type Choice :: forall t. (t -> t -> Type) -> (t -> t -> Type) -> Constraint
 class (Profunctor k p, Cocartesian' k) => Choice k p | p -> k where
   -- | Lift a mapping over the left side of a sum.
-  left' :: p x y -> p (Sum k x z) (Sum k y z)
+  left' :: (Obj p x, Obj p y, Obj p z) => p x y -> p (Sum k x z) (Sum k y z)
+  left' = dimap swap swap . right'
 
   -- | Lift a mapping over the right side of a sum.
-  right' :: p x y -> p (Sum k z x) (Sum k z y)
+  right' :: (Obj p x, Obj p y, Obj p z) => p x y -> p (Sum k z x) (Sum k z y)
+  right' = dimap swap swap . left'
+
+  {-# MINIMAL left' | right' #-}
 
 -- | Because the category is determined by functional dependency, we can use
 -- this synonym in constraints to save us some type variables.
