@@ -2,6 +2,7 @@
 {-# LANGUAGE ExplicitNamespaces #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE QuantifiedConstraints #-}
 
 -- | Choice profunctors for categories that aren't @Hask@.
 module Data.Profunctor.Choice.Enriched where
@@ -13,7 +14,8 @@ import Data.Bifunctor (first, second)
 import Data.Bitraversable (bitraverse)
 import Data.Functor.Contravariant (Op (..))
 import Data.Kind (Constraint, Type)
-import Data.Profunctor.Enriched (Obj, Profunctor (..))
+import Data.Profunctor (Forget (..))
+import Data.Profunctor.Enriched (Forget1 (..), Obj, Profunctor (..))
 import GHC.Generics ((:+:) (..))
 
 -- | An extension of the typical definition of a choice profunctor to allow for
@@ -41,6 +43,20 @@ instance Choice (->) (->) where
 
   right' :: (x -> y) -> (Either z x -> Either z y)
   right' = second
+
+instance (Monoid r) => Choice (->) (Forget r) where
+  left' :: Forget r x y -> Forget r (Either x z) (Either y z)
+  left' (Forget k) = Forget (either k mempty)
+
+  right' :: Forget r x y -> Forget r (Either z x) (Either z y)
+  right' (Forget k) = Forget (either mempty k)
+
+instance (Functor r, forall x. Monoid (r x)) => Choice (~>) (Forget1 r) where
+  left' :: Forget1 r x y -> Forget1 r (x :+: z) (y :+: z)
+  left' (Forget1 k) = Forget1 (NT \case L1 x -> runNT k x; R1 _ -> mempty)
+
+  right' :: Forget1 r x y -> Forget1 r (z :+: x) (z :+: y)
+  right' (Forget1 k) = Forget1 (NT \case L1 _ -> mempty; R1 y -> runNT k y)
 
 instance Choice Op Op where
   left' :: Op x y -> Op (x, z) (y, z)
