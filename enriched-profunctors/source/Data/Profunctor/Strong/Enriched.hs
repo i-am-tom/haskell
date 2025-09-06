@@ -12,7 +12,8 @@ import Data.Bifunctor (first, second)
 import Data.Bitraversable (bitraverse)
 import Data.Functor.Contravariant (Op (..))
 import Data.Kind (Constraint, Type)
-import Data.Profunctor.Enriched (Obj, Profunctor (..))
+import Data.Profunctor (Forget (..))
+import Data.Profunctor.Enriched (Forget1 (..), Obj, Profunctor (..))
 import GHC.Generics ((:*:) (..))
 
 -- | An extension of the typical definition of a strong profunctor to allow for
@@ -43,6 +44,20 @@ instance Strong (->) (->) where
 
   second' :: (x -> y) -> ((z, x) -> (z, y))
   second' = second
+
+instance Strong (->) (Forget r) where
+  first' :: Forget r x y -> Forget r (x, z) (y, z)
+  first' (Forget k) = Forget \(x, _) -> k x
+
+  second' :: Forget r x y -> Forget r (z, x) (z, y)
+  second' (Forget k) = Forget \(_, x) -> k x
+
+instance (Functor r) => Strong (~>) (Forget1 r) where
+  first' :: Forget1 r x y -> Forget1 r (x :*: z) (y :*: z)
+  first' (Forget1 k) = Forget1 (NT \(x :*: _) -> runNT k x)
+
+  second' :: Forget1 r x y -> Forget1 r (z :*: x) (z :*: y)
+  second' (Forget1 k) = Forget1 (NT \(_ :*: y) -> runNT k y)
 
 instance Strong Op Op where
   first' :: Op x y -> Op (Either x z) (Either y z)

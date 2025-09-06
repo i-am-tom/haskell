@@ -10,7 +10,9 @@ library
     Data.Profunctor.Closed.Enriched
   build-depends:
     , base
+    , constrained
     , constrained-categories
+    , profunctors
   hs-source-dirs: source
   default-language: GHC2021
 

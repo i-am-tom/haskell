@@ -10,6 +10,7 @@ import Control.Category.Constrained (Category (id, (.)), Category', type (~>) (.
 import Control.Category.Constrained qualified as Cat
 import Data.Functor.Contravariant (Op)
 import Data.Kind (Constraint, Type)
+import Data.Profunctor (Forget (..))
 import Data.Type.Coercion (Coercion)
 import Data.Type.Equality ((:~:), (:~~:))
 import Prelude hiding (id, (.))
@@ -49,6 +50,21 @@ rmap f = dimap id f
 
 instance Profunctor (->) (->) where
   type Cat (->) = (->)
+
+instance Profunctor (->) (Forget r) where
+  type Cat (Forget r) = (->)
+
+  dimap :: (a -> b) -> (c -> d) -> Forget r b c -> Forget r a d
+  dimap pre _ (Forget f) = Forget (f . pre)
+
+type Forget1 :: (Type -> Type) -> (Type -> Type) -> (Type -> Type) -> Type
+newtype Forget1 r f g = Forget1 {runForget1 :: f ~> r}
+
+instance (Functor r) => Profunctor (~>) (Forget1 r) where
+  type Cat (Forget1 r) = (~>)
+
+  dimap :: (Functor a, Functor b) => (a ~> b) -> (c ~> d) -> Forget1 r b c -> Forget1 r a d
+  dimap pre _ (Forget1 k) = Forget1 (k . pre)
 
 instance (Monad m) => Profunctor (->) (Kleisli m) where
   type Cat (Kleisli m) = (->)
