@@ -1,0 +1,3 @@
+# 🩻 Generic Profunctors
+
+Now we have `constrained-categories` to define a category hierarchy with constrained elements, and we've built `enriched-profunctors` on top of that hierarchy to provide profunctors over categories other than `Hask`, I want to be able to talk about generic representations in this more generalised language. If we specialise the arrows here to function arrows, everything collapses to the generics we know and love. However, we can now make transformations over more interesting structures as well.

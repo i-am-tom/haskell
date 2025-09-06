@@ -1,0 +1,37 @@
+cabal-version: 3.0
+name: generic-profunctors
+version: 0.0.0.0
+
+library
+  exposed-modules:
+    Control.Category.Generic
+    Data.Profunctor.Generic
+    Data.Optics.Constructor
+    Data.Optics.Field
+    Data.Optics.Helper
+  build-depends:
+    , base
+    , constrained
+    , constrained-categories
+    , enriched-profunctors
+  hs-source-dirs: source
+  default-language: GHC2021
+
+test-suite tests
+  build-depends:
+    , base
+    , generic-profunctors
+    , hspec
+    , profunctors
+    , QuickCheck
+    , tasty
+    , tasty-hspec
+  build-tool-depends:
+    tasty-discover:tasty-discover
+  main-is: Driver.hs
+  other-modules:
+    Test.ConstructorSpec
+    Test.FieldSpec
+  type: exitcode-stdio-1.0
+  hs-source-dirs: tests
+  default-language: GHC2021
